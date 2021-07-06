@@ -18,6 +18,8 @@ public class GUI extends Application {
     private static final double WIDTH = 750;
     private static final double BOARD_SIZE = HEIGHT - HEIGHT * 0.1;
 
+    Board gameArea = new Board(BOARD_SIZE);
+
     @Override
     public void start(Stage primaryStage) {
 
@@ -35,7 +37,6 @@ public class GUI extends Application {
     }
 
     private void createBoard(BorderPane root) {
-        Board gameArea = new Board(BOARD_SIZE);
         root.setCenter(gameArea);
     }
 
@@ -63,11 +64,11 @@ public class GUI extends Application {
         menu.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.));
         menu.setPadding(new Insets(10, 20, 15, 0));
 
-        Button defaultBoardButton = new Button("Default Board");
-        //action
+        Button sampleBoardButton = new Button("Load Sample Board");
+        sampleBoardButton.setOnAction( e -> gameArea.loadSampleBoard());
 
         Button clearButton = new Button("Clear Board");
-        //action
+        clearButton.setOnAction(e -> gameArea.clearBoard());
 
         Button generateButton = new Button("Generate Board");
         //action
@@ -83,9 +84,8 @@ public class GUI extends Application {
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> primaryStage.close());
-        //aciton
 
-        menu.getChildren().addAll(defaultBoardButton, clearButton, generateButton,
+        menu.getChildren().addAll(sampleBoardButton, clearButton, generateButton,
                 generateVisButton, solveButton, solveVisButton, exitButton);
 
         root.setRight(menu);

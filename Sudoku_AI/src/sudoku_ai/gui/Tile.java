@@ -10,7 +10,7 @@ import javafx.scene.text.TextAlignment;
 public class Tile extends StackPane {
 
     private Rectangle border = new Rectangle();
-    private Text text = new Text("1");
+    private Text text = new Text();
     private final int IDx;
     private final int IDy;
 
@@ -35,8 +35,14 @@ public class Tile extends StackPane {
         this.border.setStroke(Color.GREEN);
     }
     
-    public void setNumber(String number, int IDx, int IDy){
-        this.text.setText(number);
+    public void setNumber(int number, int IDx, int IDy){
+        String numberString;
+        if(number == 0){
+            numberString = "";
+        } else {
+            numberString = Integer.toString(number);
+        }
+        this.text.setText(numberString);
     }
     
     public int getIDx(){

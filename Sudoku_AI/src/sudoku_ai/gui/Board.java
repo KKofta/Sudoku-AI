@@ -20,25 +20,15 @@ public class Board extends Pane {
 
     private void createWiderLines() {
         for (int i = 0; i < 10; i = i + 3) {
-            Line line = new Line();
+            Line line = new Line(i * tileSize, 0, i * tileSize, boardSize);
             line.setStrokeWidth(3);
-
-            line.setStartX(i * tileSize);
-            line.setStartY(0);
-            line.setEndX(i * tileSize);
-            line.setEndY(boardSize);
 
             getChildren().addAll(line);
         }
 
         for (int i = 0; i < 10; i = i + 3) {
-            Line line = new Line();
+            Line line = new Line(0, i * tileSize, boardSize, i * tileSize);
             line.setStrokeWidth(3);
-
-            line.setStartX(0);
-            line.setStartY(i * tileSize);
-            line.setEndX(boardSize);
-            line.setEndY(i * tileSize);
 
             getChildren().addAll(line);
         }
@@ -61,14 +51,32 @@ public class Board extends Pane {
     public void clearBoard() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                tilesArray[i][j].setNumber("", i, j);
-                //tilesAray[i][j] == 0; clear array?
+                tilesArray[i][j].setNumber(0, i, j);
+            }
+        }
+    }
+
+    public void loadSampleBoard() {
+        int[][] testArray = {
+            {0, 0, 0, 2, 6, 0, 7, 0, 1},
+            {6, 8, 0, 0, 7, 0, 0, 9, 0},
+            {1, 9, 0, 0, 0, 4, 5, 0, 0},
+            {8, 2, 0, 1, 0, 0, 0, 4, 0},
+            {0, 0, 4, 6, 0, 2, 9, 0, 0},
+            {0, 5, 0, 0, 0, 3, 0, 2, 8},
+            {0, 0, 9, 3, 0, 0, 0, 7, 4},
+            {0, 4, 0, 0, 5, 0, 0, 3, 6},
+            {7, 0, 3, 0, 1, 8, 0, 0, 0}};
+
+        for (int i = 0; i < 9; i++) { //I messed up indexes, because on GUI I was thinking as x,y - reversely to arrays
+            for (int j = 0; j < 9; j++) {
+                int number = testArray[j][i]; //change [i][j] to [j][i] for now
+                tilesArray[i][j].setNumber(number, i, j);
             }
         }
     }
 
     public void setNumber(int number, int IDx, int IDy) {
-        String numberString = Integer.toString(number);
-        tilesArray[IDx][IDy].setNumber(numberString, IDx, IDy);
+        tilesArray[IDx][IDy].setNumber(number, IDx, IDy);
     }
 }
