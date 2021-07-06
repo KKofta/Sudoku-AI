@@ -4,8 +4,8 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -15,31 +15,36 @@ import javafx.stage.Stage;
 public class GUI extends Application {
 
     private static final double HEIGHT = 600;
-    private static final double WIDTH = 600;
+    private static final double WIDTH = 750;
     private static final double BOARD_SIZE = HEIGHT - HEIGHT * 0.1;
 
     @Override
     public void start(Stage primaryStage) {
 
         BorderPane root = new BorderPane();
-        createTitle(root, primaryStage);
-        
-        Board gameArea = new Board(BOARD_SIZE);
-        root.setCenter(gameArea);
 
-        Scene scene = new Scene(root, HEIGHT, WIDTH);
+        createTitle(root, primaryStage);
+        createMenu(root, primaryStage);
+        createBoard(root);
+
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         primaryStage.setTitle("Sudoku with AI");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+    private void createBoard(BorderPane root) {
+        Board gameArea = new Board(BOARD_SIZE);
+        root.setCenter(gameArea);
+    }
+
     private void createTitle(BorderPane root, Stage primaryStage) {
-        
+
         VBox title = new VBox();
         //multiply to set size (0.80 is like 10% of the window) - do ew późniejszego poprawienia boardu i tile
         title.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.1));
-        
+
         title.setAlignment(Pos.CENTER);
         title.setPadding(new Insets(10, 0, 0, 0));
 
@@ -49,6 +54,41 @@ public class GUI extends Application {
 
         title.getChildren().addAll(titleText);
         root.setTop(title);
+    }
+
+    private void createMenu(BorderPane root, Stage primaryStage) {
+
+        VBox menu = new VBox(20);
+        menu.setAlignment(Pos.CENTER);
+        menu.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.));
+        menu.setPadding(new Insets(10, 20, 15, 0));
+
+        Button defaultBoardButton = new Button("Default Board");
+        //action
+
+        Button clearButton = new Button("Clear Board");
+        //action
+
+        Button generateButton = new Button("Generate Board");
+        //action
+
+        Button generateVisButton = new Button("Generate Board & Visualize");
+        //action
+
+        Button solveButton = new Button("Use Algorithm");
+        //action
+
+        Button solveVisButton = new Button("Use Algorithm & Viusalize");
+        //action
+
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction(e -> primaryStage.close());
+        //aciton
+
+        menu.getChildren().addAll(defaultBoardButton, clearButton, generateButton,
+                generateVisButton, solveButton, solveVisButton, exitButton);
+
+        root.setRight(menu);
     }
 
 }
