@@ -1,5 +1,11 @@
 package sudoku_ai.gui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
@@ -79,4 +85,36 @@ public class Board extends Pane {
     public void setNumber(int number, int IDx, int IDy) {
         tilesArray[IDx][IDy].setNumber(number, IDx, IDy);
     }
+    
+    /*public void generateBoardv2(){
+        int range = 9;
+        Set<Integer> middle = new LinkedHashSet<>();
+        Random rand = new Random();
+        
+        while(middle.size() < range){
+            Integer next = rand.nextInt(range) + 1;
+            middle.add(next);
+            System.out.println(next);
+            System.out.println(Arrays.toString(middle.toArray()));
+        }  
+    }
+*/
+    
+    public void generateBoard(){
+        int size = 9;
+
+        List<Integer> list = new ArrayList<>(size);
+        for(int i = 1; i <= size; i++) {
+            list.add(i);
+        }
+
+        Random rand = new Random();
+        while(list.size() > 0) {
+            int index = rand.nextInt(list.size());
+            list.remove(index);
+            
+            System.out.println(Arrays.toString(list.toArray()));
+        }
+    }
+    
 }

@@ -65,12 +65,15 @@ public class GUI extends Application {
         menu.setPadding(new Insets(10, 20, 15, 0));
 
         Button sampleBoardButton = new Button("Load Sample Board");
-        sampleBoardButton.setOnAction( e -> gameArea.loadSampleBoard());
+        sampleBoardButton.setOnAction(e -> gameArea.loadSampleBoard());
 
         Button clearButton = new Button("Clear Board");
         clearButton.setOnAction(e -> gameArea.clearBoard());
 
         Button generateButton = new Button("Generate Board");
+        generateButton.setOnAction(e -> {
+            gameArea.generateBoard();
+        });
         //action
 
         Button generateVisButton = new Button("Generate Board & Visualize");

@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -23,6 +24,7 @@ public class Tile extends StackPane {
         this.border.setStroke(Color.BLACK);
         this.border.setStrokeWidth(1.5);
 
+        text.setFont(Font.font(30));
         text.setTextAlignment(TextAlignment.CENTER);
         setAlignment(this.border, Pos.CENTER);
         setAlignment(this.text, Pos.CENTER);
