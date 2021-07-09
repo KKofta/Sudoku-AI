@@ -12,12 +12,12 @@ public class Tile extends StackPane {
 
     private Rectangle border = new Rectangle();
     private Text text = new Text();
-    private final int IDx;
-    private final int IDy;
+    //private final int IDx;
+    //private final int IDy;
 
-    public Tile(double tileSize, int IDx, int IDy) {
-        this.IDx = IDx;
-        this.IDy = IDy;
+    public Tile(double tileSize/*, int IDx, int IDy*/) {
+        //this.IDx = IDx;
+        //this.IDy = IDy;
         this.border.setWidth(tileSize);
         this.border.setHeight(tileSize);
         this.border.setFill(null);
@@ -33,26 +33,34 @@ public class Tile extends StackPane {
         getChildren().addAll(this.border, this.text);
     }
 
-    public void setGreenBorderColor() {
-        this.border.setStroke(Color.GREEN);
-    }
-    
-    public void setNumber(int number, int IDx, int IDy){
+    public void setNumber(int number/*, int IDx, int IDy*/) {
         String numberString;
-        if(number == 0){
+        if (number == 0) {
             numberString = "";
         } else {
             numberString = Integer.toString(number);
         }
         this.text.setText(numberString);
     }
-    
-    public int getIDx(){
-        return this.IDx;
-    }
-    
-    public int getIDy(){
-        return this.IDy;
+
+    public int getNumber() {
+        String numberString = this.text.getText();
+        if (numberString.equals("")) {
+            return 0;
+        }
+        return Integer.parseInt(numberString);
     }
 
+    /*public int getIDx() {
+        return this.IDx;
+    }
+
+    public int getIDy() {
+        return this.IDy;
+    
+    public void setGreenBorderColor() {
+        this.border.setStroke(Color.GREEN);
+    }
+    }*/
+    
 }

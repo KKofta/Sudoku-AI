@@ -1,11 +1,8 @@
 package sudoku_ai.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
@@ -41,11 +38,12 @@ public class Board extends Pane {
     }
 
     private void createGrid() {
+        //we look at grid coordinates not as (X,Y), but as in 2D array
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                Tile tile = new Tile(tileSize, i, j);
-                tile.setTranslateX(i * tileSize);
-                tile.setTranslateY(j * tileSize);
+                Tile tile = new Tile(tileSize/*, i, j*/);
+                tile.setTranslateX(j * tileSize);
+                tile.setTranslateY(i * tileSize);
 
                 getChildren().addAll(tile);
 
@@ -57,13 +55,13 @@ public class Board extends Pane {
     public void clearBoard() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                tilesArray[i][j].setNumber(0, i, j);
+                tilesArray[i][j].setNumber(0/*, i, j*/);
             }
         }
     }
 
     public void loadSampleBoard() {
-        int[][] testArray = {
+        int[][] sampleArray = {
             {0, 0, 0, 2, 6, 0, 7, 0, 1},
             {6, 8, 0, 0, 7, 0, 0, 9, 0},
             {1, 9, 0, 0, 0, 4, 5, 0, 0},
@@ -76,16 +74,61 @@ public class Board extends Pane {
 
         for (int i = 0; i < 9; i++) { //I messed up indexes, because on GUI I was thinking as x,y - reversely to arrays
             for (int j = 0; j < 9; j++) {
-                int number = testArray[j][i]; //change [i][j] to [j][i] for now
-                tilesArray[i][j].setNumber(number, i, j);
+                int number = sampleArray[i][j]; //change [i][j] to [j][i] for now
+                tilesArray[i][j].setNumber(number/*, i, j*/);
             }
         }
     }
 
-    public void setNumber(int number, int IDx, int IDy) {
-        tilesArray[IDx][IDy].setNumber(number, IDx, IDy);
+    public void generateBoard() {
+        int size = 9;
+        Random rand = new Random();
+        List<Integer> list = new ArrayList<>(size);
+
+        for (int rowNr = 0; rowNr < 4; rowNr++) {
+            //adding elements 1-9 to list
+            for (int i = 1; i <= size; i++) {
+                list.add(i);
+            }
+
+            int columnNr = 0;
+            while (list.size() > 0) {
+                int index = rand.nextInt(list.size());
+                int number = list.get(index);
+
+                //System.out.println(Arrays.toString(list.toArray()));
+                //System.out.println("#" + columnNr + " Index: " + index + " | Number: " + number);
+                boolean checkCol = isInColumn(rowNr, columnNr, number);
+
+                if (checkCol == false) {
+                    tilesArray[rowNr][columnNr].setNumber(number/*, columnNr, rowNr*/);
+                    list.remove(index);
+                    columnNr++;
+                }
+            }
+            //System.out.println("------------------------------------------------------------------------");
+        }
     }
-    
+
+    private boolean isInColumn(int rowNr, int columnNr, int numberToCompare) {
+        for (int row = 0; row < rowNr; row++) {
+            //System.out.println("isInColumn: columnNr: "+columnNr+" | rowNr: "+rowNr+" | NrToCompare: "+numberToCompare);
+            System.out.println("Number from row #" + row + ": " + tilesArray[row][columnNr].getNumber());
+            System.out.println("Random number: " + numberToCompare);
+            if (tilesArray[row][columnNr].getNumber() == numberToCompare && columnNr == 8) {
+                //System.out.println("ZAPĘTLONA!!!???    |     Row NR: " + rowNr);
+            } else if (tilesArray[row][columnNr].getNumber() == numberToCompare) {
+                //System.out.println("JEST??        |     Row NR: " + rowNr);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setNumber(int number, int IDx, int IDy) {
+        tilesArray[IDx][IDy].setNumber(number/*, IDx, IDy*/);
+    }
+
     /*public void generateBoardv2(){
         int range = 9;
         Set<Integer> middle = new LinkedHashSet<>();
@@ -98,23 +141,5 @@ public class Board extends Pane {
             System.out.println(Arrays.toString(middle.toArray()));
         }  
     }
-*/
-    
-    public void generateBoard(){
-        int size = 9;
-
-        List<Integer> list = new ArrayList<>(size);
-        for(int i = 1; i <= size; i++) {
-            list.add(i);
-        }
-
-        Random rand = new Random();
-        while(list.size() > 0) {
-            int index = rand.nextInt(list.size());
-            list.remove(index);
-            
-            System.out.println(Arrays.toString(list.toArray()));
-        }
-    }
-    
+     */
 }
