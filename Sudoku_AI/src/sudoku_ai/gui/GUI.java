@@ -72,7 +72,7 @@ public class GUI extends Application {
 
         Button generateButton = new Button("Generate Board");
         generateButton.setOnAction(e -> {
-            gameArea.generateBoard();
+            gameArea.generateBoard2();
         });
         //action
 

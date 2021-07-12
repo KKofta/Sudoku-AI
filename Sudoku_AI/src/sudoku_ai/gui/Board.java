@@ -1,8 +1,10 @@
 package sudoku_ai.gui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
@@ -142,4 +144,141 @@ public class Board extends Pane {
         }  
     }
      */
+    public void generateBoard2() {
+
+        Set<Integer> basicSet = new HashSet<>();
+
+        for (int i = 1; i <= 9; i++) {
+            basicSet.add(i);
+        }
+
+        Set<Integer> row1Set = new HashSet<>(basicSet);
+        Set<Integer> row2Set = new HashSet<>(basicSet);
+        Set<Integer> row3Set = new HashSet<>(basicSet);
+
+        Set<Integer> square1Set = new HashSet<>(basicSet);
+        Set<Integer> square2Set = new HashSet<>(basicSet);
+        Set<Integer> square3Set = new HashSet<>(basicSet);
+
+        Set<Integer> column1Set = new HashSet<>(basicSet);
+        Set<Integer> column2Set = new HashSet<>(basicSet);
+        Set<Integer> column3Set = new HashSet<>(basicSet);
+        Set<Integer> column4Set = new HashSet<>(basicSet);
+        Set<Integer> column5Set = new HashSet<>(basicSet);
+        Set<Integer> column6Set = new HashSet<>(basicSet);
+        Set<Integer> column7Set = new HashSet<>(basicSet);
+        Set<Integer> column8Set = new HashSet<>(basicSet);
+        Set<Integer> column9Set = new HashSet<>(basicSet);
+
+        List<Set> rowSetList = new ArrayList<>();
+        List<Set> squareSetList = new ArrayList<>();
+        List<Set> columnSetList = new ArrayList<>();
+
+        rowSetList.add(row1Set);
+        rowSetList.add(row2Set);
+        rowSetList.add(row3Set);
+
+        squareSetList.add(square1Set);
+        squareSetList.add(square2Set);
+        squareSetList.add(square3Set);
+
+        columnSetList.add(column1Set);
+        columnSetList.add(column2Set);
+        columnSetList.add(column3Set);
+        columnSetList.add(column4Set);
+        columnSetList.add(column5Set);
+        columnSetList.add(column6Set);
+        columnSetList.add(column7Set);
+        columnSetList.add(column8Set);
+        columnSetList.add(column9Set);
+
+        //------------ row 1--------------------
+        /*Set<Integer> resultSet = new HashSet<>(row1Set);
+
+        resultSet.retainAll(row1Set);
+        resultSet.retainAll(column1Set);
+        resultSet.retainAll(square1Set);
+
+        Integer[] resultArray = new Integer[resultSet.size()];
+        resultSet.toArray(resultArray);
+
+        Random r = new Random();
+        int nextRandomNumberIndex = r.nextInt(resultArray.length);
+        int resultNumber = resultArray[nextRandomNumberIndex];
+        System.out.println(resultNumber);
+
+        tilesArray[0][0].setNumber(resultNumber);
+        row1Set.remove(resultNumber);
+        column1Set.remove(resultNumber);
+        square1Set.remove(resultNumber);*/
+        
+        
+        //------------- square 1 -----------------
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                Set<Integer> resultSet = new HashSet<>(squareSetList.get(0));
+                resultSet.retainAll(rowSetList.get(i));
+                resultSet.retainAll(columnSetList.get(j));
+
+                Integer[] resultArray = new Integer[resultSet.size()];
+                resultSet.toArray(resultArray);
+
+                Random r = new Random();
+                int nextRandomNumberIndex = r.nextInt(resultArray.length);
+                int resultNumber = resultArray[nextRandomNumberIndex];
+
+                tilesArray[i][j].setNumber(resultNumber);
+                rowSetList.get(i).remove(resultNumber);
+                columnSetList.get(j).remove(resultNumber);
+                squareSetList.get(0).remove(resultNumber);
+
+            }
+        }
+        
+        //------------ square 2 ---------------------
+        for (int i = 0; i < 3; i++) {
+            for (int j = 3; j < 6; j++) {
+                Set<Integer> resultSet = new HashSet<>(squareSetList.get(1));
+                resultSet.retainAll(rowSetList.get(i));
+                resultSet.retainAll(columnSetList.get(j));
+
+                Integer[] resultArray = new Integer[resultSet.size()];
+                resultSet.toArray(resultArray);
+
+                Random r = new Random();
+                int nextRandomNumberIndex = r.nextInt(resultArray.length);
+                int resultNumber = resultArray[nextRandomNumberIndex];
+
+                tilesArray[i][j].setNumber(resultNumber);
+                rowSetList.get(i).remove(resultNumber);
+                columnSetList.get(j).remove(resultNumber);
+                squareSetList.get(1).remove(resultNumber);
+
+            }
+        }
+        
+        //----------- square 3 ---------------------
+        for (int i = 0; i < 3; i++) {
+            for (int j = 6; j < 9; j++) {
+                Set<Integer> resultSet = new HashSet<>(squareSetList.get(2));
+                resultSet.retainAll(rowSetList.get(i));
+                resultSet.retainAll(columnSetList.get(j));
+
+                Integer[] resultArray = new Integer[resultSet.size()];
+                resultSet.toArray(resultArray);
+
+                Random r = new Random();
+                int nextRandomNumberIndex = r.nextInt(resultArray.length);
+                int resultNumber = resultArray[nextRandomNumberIndex];
+
+                tilesArray[i][j].setNumber(resultNumber);
+                rowSetList.get(i).remove(resultNumber);
+                columnSetList.get(j).remove(resultNumber);
+                squareSetList.get(2).remove(resultNumber);
+
+            }
+        }
+
+    }
+
 }
