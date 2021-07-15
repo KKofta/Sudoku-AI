@@ -67,7 +67,7 @@ public class Board extends Pane {
         }
     }
 
-    public void loadSampleBoard() {
+    public void loadEasyBoard() {
         initializeLists();
 
         int[][] sampleArray = {
@@ -80,6 +80,32 @@ public class Board extends Pane {
             {0, 0, 9, 3, 0, 0, 0, 7, 4},
             {0, 4, 0, 0, 5, 0, 0, 3, 6},
             {7, 0, 3, 0, 1, 8, 0, 0, 0}};
+
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                int number = sampleArray[row][col];
+                tilesArray[row][col].setNumber(number/*, i, j*/);
+                columnSetList.get(col).remove(number);
+                rowSetList.get(row).remove(number);
+                int squareIndex = calculateSquareIndex(row, col);
+                squareSetList.get(squareIndex).remove(number);
+            }
+        }
+    }
+    
+    public void loadHardBoard() {
+        initializeLists();
+
+        int[][] sampleArray = {
+            {0, 0, 0, 0, 0, 0, 6, 8, 0},
+            {0, 0, 0, 0, 7, 3, 0, 0, 9},
+            {3, 0, 9, 0, 0, 0, 0, 4, 5},
+            {4, 9, 0, 0, 0, 0, 0, 0, 0},
+            {8, 0, 3, 0, 5, 0, 9, 0, 2},
+            {0, 0, 0, 0, 0, 0, 0, 3, 6},
+            {9, 6, 0, 0, 0, 0, 3, 0, 8},
+            {7, 0, 0, 6, 8, 0, 0, 0, 0},
+            {0, 2, 8, 0, 0, 0, 0, 0, 0}};
 
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {

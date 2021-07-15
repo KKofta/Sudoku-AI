@@ -5,7 +5,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -15,10 +17,11 @@ import javafx.stage.Stage;
 public class GUI extends Application {
 
     private static final double HEIGHT = 600;
-    private static final double WIDTH = 750;
-    private static final double BOARD_SIZE = HEIGHT - HEIGHT * 0.2;
+    private static final double WIDTH = 800;
+    //private static final double BOARD_SIZE = HEIGHT - HEIGHT * 0.2;
+    private static final double BOARD_SIZE = 500;
 
-    Board gameArea = new Board(BOARD_SIZE);
+    private Board gameArea = new Board(BOARD_SIZE);
 
     @Override
     public void start(Stage primaryStage) {
@@ -61,34 +64,44 @@ public class GUI extends Application {
 
     private void createMenu(BorderPane root, Stage primaryStage) {
 
-        VBox menu = new VBox(30);
+        VBox menu = new VBox(20);
         menu.setAlignment(Pos.CENTER);
         menu.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.));
         menu.setPadding(new Insets(10, 20, 15, 0));
 
-        Button sampleBoardButton = new Button("Load Sample Board");
-        sampleBoardButton.setOnAction(e -> gameArea.loadSampleBoard());
+        Label samplesLabel = new Label("Load Sample Boards");
+        HBox samplesHBox = new HBox(10);
+        Button easyButton = new Button("Easy Board");
+        easyButton.setOnAction(e -> gameArea.loadEasyBoard());
+        Button hardButton = new Button("Hard Board");
+        hardButton.setOnAction(e -> gameArea.loadHardBoard());
+        samplesHBox.getChildren().addAll(easyButton, hardButton);
 
+        Label generatorsLabel = new Label("Generate Boards");
+        HBox generatorsHBox = new HBox(10);
+        Button generateButton = new Button("Generate");
+        //action
+        Button generateVisButton = new Button("Visualize");
+        //action
+        generatorsHBox.getChildren().addAll(generateButton, generateVisButton);
+
+        Label solversLabel = new Label("Solve Boards");
+        HBox solversHBox = new HBox(10);
+        Button solveButton = new Button("First Algorithm");
+        solveButton.setOnAction(e -> gameArea.solveSudoku());
+        Button solveVisButton = new Button("Viusalize");
+        //action
+        solversHBox.getChildren().addAll(solveButton, solveVisButton);
+        solversHBox.setPadding(new Insets(0,0,25,0));
+        
         Button clearButton = new Button("Clear Board");
         clearButton.setOnAction(e -> gameArea.clearBoard());
-
-        Button generateButton = new Button("Generate Board");
-        //action
-
-        Button generateVisButton = new Button("Generate Board & Visualize");
-        //action
-
-        Button solveButton = new Button("Use Algorithm");
-        solveButton.setOnAction(e -> gameArea.solveSudoku());
-
-        Button solveVisButton = new Button("Use Algorithm & Viusalize");
-        //action
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> primaryStage.close());
 
-        menu.getChildren().addAll(sampleBoardButton, clearButton, generateButton,
-                generateVisButton, solveButton, solveVisButton, exitButton);
+        menu.getChildren().addAll(samplesLabel, samplesHBox, generatorsLabel, generatorsHBox,
+                solversLabel, solversHBox, clearButton, exitButton);
 
         root.setRight(menu);
     }

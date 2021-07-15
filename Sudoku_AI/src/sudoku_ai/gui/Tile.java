@@ -43,6 +43,8 @@ public class Tile extends StackPane {
             numberString = Integer.toString(number);
         }
         this.text.setText(numberString);
+        text.setFill(Color.WHITESMOKE);
+        text.setStroke(Color.WHITESMOKE);
     }
     
     public void setCalculatedNumber(int number) {
