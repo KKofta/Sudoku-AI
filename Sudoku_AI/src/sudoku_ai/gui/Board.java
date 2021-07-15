@@ -24,7 +24,6 @@ public class Board extends Pane {
 
         createWiderLines();
         createGrid();
-        initializeLists(columnSetList, rowSetList, squareSetList);//idk if it's fine here
     }
 
     private void createWiderLines() {
@@ -69,6 +68,8 @@ public class Board extends Pane {
     }
 
     public void loadSampleBoard() {
+        initializeLists();
+
         int[][] sampleArray = {
             {0, 0, 0, 2, 6, 0, 7, 0, 1},
             {6, 8, 0, 0, 7, 0, 0, 9, 0},
@@ -135,7 +136,7 @@ public class Board extends Pane {
         }
     }
 
-    private static void initializeLists(List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
+    private static void initializeLists() {
 
         Set<Integer> basicSet = new HashSet<>();
 
@@ -153,12 +154,24 @@ public class Board extends Pane {
     private int calculateSquareIndex(int row, int col) {
         int squareIndex = 0;
         int x = row / 3;
-        if (col == 0 || col == 1 || col == 2) {
-            squareIndex = 3 * x;
-        } else if (col == 3 || col == 4 || col == 5) {
-            squareIndex = 3 * x + 1;
-        } else if (col == 6 || col == 7 || col == 8) {
-            squareIndex = 3 * x + 2;
+        switch (col) {
+            case 0:
+            case 1:
+            case 2:
+                squareIndex = 3 * x;
+                break;
+            case 3:
+            case 4:
+            case 5:
+                squareIndex = 3 * x + 1;
+                break;
+            case 6:
+            case 7:
+            case 8:
+                squareIndex = 3 * x + 2;
+                break;
+            default:
+                break;
         }
         return squareIndex;
     }
@@ -170,6 +183,10 @@ public class Board extends Pane {
                 return false;
             }
         }
+        //idk if here is fine
+        columnSetList.clear();
+        rowSetList.clear();
+        squareSetList.clear();
         return true;
     }
 
