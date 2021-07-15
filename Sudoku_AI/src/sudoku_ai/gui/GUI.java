@@ -16,7 +16,7 @@ public class GUI extends Application {
 
     private static final double HEIGHT = 600;
     private static final double WIDTH = 750;
-    private static final double BOARD_SIZE = HEIGHT - HEIGHT * 0.1;
+    private static final double BOARD_SIZE = HEIGHT - HEIGHT * 0.2;
 
     Board gameArea = new Board(BOARD_SIZE);
 
@@ -24,12 +24,14 @@ public class GUI extends Application {
     public void start(Stage primaryStage) {
 
         BorderPane root = new BorderPane();
+        root.setPadding(new Insets(15,15,15,15));
 
         createTitle(root, primaryStage);
         createMenu(root, primaryStage);
         createBoard(root);
 
         Scene scene = new Scene(root, WIDTH, HEIGHT);
+        scene.getStylesheets().add(getClass().getResource("Styles.css").toExternalForm());
 
         primaryStage.setTitle("Sudoku with AI");
         primaryStage.setScene(scene);
@@ -47,11 +49,11 @@ public class GUI extends Application {
         title.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.1));
 
         title.setAlignment(Pos.CENTER);
-        title.setPadding(new Insets(10, 0, 0, 0));
+        title.setPadding(new Insets(0, 0, 15, 0));
 
         Text titleText = new Text("Sudoku with AI");
         titleText.setFont(Font.font("Verdana", 30));
-        titleText.setFill(Color.BLACK);
+        titleText.setFill(Color.WHITESMOKE);
 
         title.getChildren().addAll(titleText);
         root.setTop(title);
@@ -59,7 +61,7 @@ public class GUI extends Application {
 
     private void createMenu(BorderPane root, Stage primaryStage) {
 
-        VBox menu = new VBox(20);
+        VBox menu = new VBox(30);
         menu.setAlignment(Pos.CENTER);
         menu.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.));
         menu.setPadding(new Insets(10, 20, 15, 0));
@@ -71,16 +73,13 @@ public class GUI extends Application {
         clearButton.setOnAction(e -> gameArea.clearBoard());
 
         Button generateButton = new Button("Generate Board");
-        generateButton.setOnAction(e -> {
-            gameArea.generateBoard2();
-        });
         //action
 
         Button generateVisButton = new Button("Generate Board & Visualize");
         //action
 
         Button solveButton = new Button("Use Algorithm");
-        //action
+        solveButton.setOnAction(e -> gameArea.solveSudoku());
 
         Button solveVisButton = new Button("Use Algorithm & Viusalize");
         //action

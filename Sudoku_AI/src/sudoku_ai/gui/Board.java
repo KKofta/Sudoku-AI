@@ -3,14 +3,17 @@ package sudoku_ai.gui;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 public class Board extends Pane {
 
     private final Tile[][] tilesArray = new Tile[9][9];
+    private static List<Set> columnSetList = new ArrayList<>(9);//static?
+    private static List<Set> rowSetList = new ArrayList<>(9);//static?
+    private static List<Set> squareSetList = new ArrayList<>(9);//static?
     private final double tileSize;
     private final double boardSize;
 
@@ -21,19 +24,22 @@ public class Board extends Pane {
 
         createWiderLines();
         createGrid();
+        initializeLists(columnSetList, rowSetList, squareSetList);//idk if it's fine here
     }
 
     private void createWiderLines() {
         for (int i = 0; i < 10; i = i + 3) {
             Line line = new Line(i * tileSize, 0, i * tileSize, boardSize);
-            line.setStrokeWidth(3);
+            line.setStrokeWidth(4);
+            line.setStroke(Color.WHITESMOKE);
 
             getChildren().addAll(line);
         }
 
         for (int i = 0; i < 10; i = i + 3) {
             Line line = new Line(0, i * tileSize, boardSize, i * tileSize);
-            line.setStrokeWidth(3);
+            line.setStrokeWidth(4);
+            line.setStroke(Color.WHITESMOKE);
 
             getChildren().addAll(line);
         }
@@ -74,77 +80,62 @@ public class Board extends Pane {
             {0, 4, 0, 0, 5, 0, 0, 3, 6},
             {7, 0, 3, 0, 1, 8, 0, 0, 0}};
 
-        for (int i = 0; i < 9; i++) { //I messed up indexes, because on GUI I was thinking as x,y - reversely to arrays
-            for (int j = 0; j < 9; j++) {
-                int number = sampleArray[i][j]; //change [i][j] to [j][i] for now
-                tilesArray[i][j].setNumber(number/*, i, j*/);
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                int number = sampleArray[row][col];
+                tilesArray[row][col].setNumber(number/*, i, j*/);
+                columnSetList.get(col).remove(number);
+                rowSetList.get(row).remove(number);
+                int squareIndex = calculateSquareIndex(row, col);
+                squareSetList.get(squareIndex).remove(number);
             }
         }
     }
 
-    public void generateBoard() {
-        int size = 9;
-        Random rand = new Random();
-        List<Integer> list = new ArrayList<>(size);
+    public void solveSudoku() {
+        /*Algorithm: 
+        We loop through columns and rows and look for empty tiles. 
+        In empty tiles we calculate intersection of set of rows, set of columns and set of squares.
+        If the resulting set contains only one number it means that it's the only possible number to enter.
+         */
+        Set<Integer> basicSet = new HashSet<>();
 
-        for (int rowNr = 0; rowNr < 4; rowNr++) {
-            //adding elements 1-9 to list
-            for (int i = 1; i <= size; i++) {
-                list.add(i);
-            }
+        for (int i = 1; i <= 9; i++) {
+            basicSet.add(i);
+        }
 
-            int columnNr = 0;
-            while (list.size() > 0) {
-                int index = rand.nextInt(list.size());
-                int number = list.get(index);
+        while (isAlgorithmFinished() == false) {
+            for (int row = 0; row < 9; row++) {
+                for (int col = 0; col < 9; col++) {
+                    if (tilesArray[row][col].getNumber() == 0) {
+                        //additional set to avoid unintended destruction
+                        Set<Integer> resultSet = new HashSet<>(basicSet);
+                        //check col
+                        resultSet.retainAll(columnSetList.get(col));
+                        //check row
+                        resultSet.retainAll(rowSetList.get(row));
+                        //check square
+                        int squareIndex = calculateSquareIndex(row, col);
+                        resultSet.retainAll(squareSetList.get(squareIndex));
 
-                //System.out.println(Arrays.toString(list.toArray()));
-                //System.out.println("#" + columnNr + " Index: " + index + " | Number: " + number);
-                boolean checkCol = isInColumn(rowNr, columnNr, number);
-
-                if (checkCol == false) {
-                    tilesArray[rowNr][columnNr].setNumber(number/*, columnNr, rowNr*/);
-                    list.remove(index);
-                    columnNr++;
+                        if (resultSet.size() == 1) {
+                            //display the only possible number after intersections
+                            Integer[] resultArray = new Integer[1];
+                            resultSet.toArray(resultArray);
+                            int resultNumber = resultArray[0];
+                            tilesArray[row][col].setNumber(resultNumber);
+                            //delete chosen number from sets
+                            columnSetList.get(col).remove(resultNumber);
+                            rowSetList.get(row).remove(resultNumber);
+                            squareSetList.get(squareIndex).remove(resultNumber);
+                        }
+                    }
                 }
             }
-            //System.out.println("------------------------------------------------------------------------");
         }
     }
 
-    private boolean isInColumn(int rowNr, int columnNr, int numberToCompare) {
-        for (int row = 0; row < rowNr; row++) {
-            //System.out.println("isInColumn: columnNr: "+columnNr+" | rowNr: "+rowNr+" | NrToCompare: "+numberToCompare);
-            System.out.println("Number from row #" + row + ": " + tilesArray[row][columnNr].getNumber());
-            System.out.println("Random number: " + numberToCompare);
-            if (tilesArray[row][columnNr].getNumber() == numberToCompare && columnNr == 8) {
-                //System.out.println("ZAPĘTLONA!!!???    |     Row NR: " + rowNr);
-            } else if (tilesArray[row][columnNr].getNumber() == numberToCompare) {
-                //System.out.println("JEST??        |     Row NR: " + rowNr);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void setNumber(int number, int IDx, int IDy) {
-        tilesArray[IDx][IDy].setNumber(number/*, IDx, IDy*/);
-    }
-
-    /*public void generateBoardv2(){
-        int range = 9;
-        Set<Integer> middle = new LinkedHashSet<>();
-        Random rand = new Random();
-        
-        while(middle.size() < range){
-            Integer next = rand.nextInt(range) + 1;
-            middle.add(next);
-            System.out.println(next);
-            System.out.println(Arrays.toString(middle.toArray()));
-        }  
-    }
-     */
-    public void generateBoard2() {
+    private static void initializeLists(List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
 
         Set<Integer> basicSet = new HashSet<>();
 
@@ -152,133 +143,38 @@ public class Board extends Pane {
             basicSet.add(i);
         }
 
-        Set<Integer> row1Set = new HashSet<>(basicSet);
-        Set<Integer> row2Set = new HashSet<>(basicSet);
-        Set<Integer> row3Set = new HashSet<>(basicSet);
+        for (int i = 0; i < 9; i++) {
+            columnSetList.add(new HashSet<>(basicSet));
+            rowSetList.add(new HashSet<>(basicSet));
+            squareSetList.add(new HashSet<>(basicSet));
+        }
+    }
 
-        Set<Integer> square1Set = new HashSet<>(basicSet);
-        Set<Integer> square2Set = new HashSet<>(basicSet);
-        Set<Integer> square3Set = new HashSet<>(basicSet);
+    private int calculateSquareIndex(int row, int col) {
+        int squareIndex = 0;
+        int x = row / 3;
+        if (col == 0 || col == 1 || col == 2) {
+            squareIndex = 3 * x;
+        } else if (col == 3 || col == 4 || col == 5) {
+            squareIndex = 3 * x + 1;
+        } else if (col == 6 || col == 7 || col == 8) {
+            squareIndex = 3 * x + 2;
+        }
+        return squareIndex;
+    }
 
-        Set<Integer> column1Set = new HashSet<>(basicSet);
-        Set<Integer> column2Set = new HashSet<>(basicSet);
-        Set<Integer> column3Set = new HashSet<>(basicSet);
-        Set<Integer> column4Set = new HashSet<>(basicSet);
-        Set<Integer> column5Set = new HashSet<>(basicSet);
-        Set<Integer> column6Set = new HashSet<>(basicSet);
-        Set<Integer> column7Set = new HashSet<>(basicSet);
-        Set<Integer> column8Set = new HashSet<>(basicSet);
-        Set<Integer> column9Set = new HashSet<>(basicSet);
+    private static boolean isAlgorithmFinished() {
 
-        List<Set> rowSetList = new ArrayList<>();
-        List<Set> squareSetList = new ArrayList<>();
-        List<Set> columnSetList = new ArrayList<>();
-
-        rowSetList.add(row1Set);
-        rowSetList.add(row2Set);
-        rowSetList.add(row3Set);
-
-        squareSetList.add(square1Set);
-        squareSetList.add(square2Set);
-        squareSetList.add(square3Set);
-
-        columnSetList.add(column1Set);
-        columnSetList.add(column2Set);
-        columnSetList.add(column3Set);
-        columnSetList.add(column4Set);
-        columnSetList.add(column5Set);
-        columnSetList.add(column6Set);
-        columnSetList.add(column7Set);
-        columnSetList.add(column8Set);
-        columnSetList.add(column9Set);
-
-        //------------ row 1--------------------
-        /*Set<Integer> resultSet = new HashSet<>(row1Set);
-
-        resultSet.retainAll(row1Set);
-        resultSet.retainAll(column1Set);
-        resultSet.retainAll(square1Set);
-
-        Integer[] resultArray = new Integer[resultSet.size()];
-        resultSet.toArray(resultArray);
-
-        Random r = new Random();
-        int nextRandomNumberIndex = r.nextInt(resultArray.length);
-        int resultNumber = resultArray[nextRandomNumberIndex];
-        System.out.println(resultNumber);
-
-        tilesArray[0][0].setNumber(resultNumber);
-        row1Set.remove(resultNumber);
-        column1Set.remove(resultNumber);
-        square1Set.remove(resultNumber);*/
-        
-        
-        //------------- square 1 -----------------
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                Set<Integer> resultSet = new HashSet<>(squareSetList.get(0));
-                resultSet.retainAll(rowSetList.get(i));
-                resultSet.retainAll(columnSetList.get(j));
-
-                Integer[] resultArray = new Integer[resultSet.size()];
-                resultSet.toArray(resultArray);
-
-                Random r = new Random();
-                int nextRandomNumberIndex = r.nextInt(resultArray.length);
-                int resultNumber = resultArray[nextRandomNumberIndex];
-
-                tilesArray[i][j].setNumber(resultNumber);
-                rowSetList.get(i).remove(resultNumber);
-                columnSetList.get(j).remove(resultNumber);
-                squareSetList.get(0).remove(resultNumber);
-
+        for (int i = 0; i < 9; i++) {
+            if (columnSetList.get(i).isEmpty() == false || rowSetList.get(i).isEmpty() == false || squareSetList.get(i).isEmpty() == false) {
+                return false;
             }
         }
-        
-        //------------ square 2 ---------------------
-        for (int i = 0; i < 3; i++) {
-            for (int j = 3; j < 6; j++) {
-                Set<Integer> resultSet = new HashSet<>(squareSetList.get(1));
-                resultSet.retainAll(rowSetList.get(i));
-                resultSet.retainAll(columnSetList.get(j));
+        return true;
+    }
 
-                Integer[] resultArray = new Integer[resultSet.size()];
-                resultSet.toArray(resultArray);
-
-                Random r = new Random();
-                int nextRandomNumberIndex = r.nextInt(resultArray.length);
-                int resultNumber = resultArray[nextRandomNumberIndex];
-
-                tilesArray[i][j].setNumber(resultNumber);
-                rowSetList.get(i).remove(resultNumber);
-                columnSetList.get(j).remove(resultNumber);
-                squareSetList.get(1).remove(resultNumber);
-
-            }
-        }
-        
-        //----------- square 3 ---------------------
-        for (int i = 0; i < 3; i++) {
-            for (int j = 6; j < 9; j++) {
-                Set<Integer> resultSet = new HashSet<>(squareSetList.get(2));
-                resultSet.retainAll(rowSetList.get(i));
-                resultSet.retainAll(columnSetList.get(j));
-
-                Integer[] resultArray = new Integer[resultSet.size()];
-                resultSet.toArray(resultArray);
-
-                Random r = new Random();
-                int nextRandomNumberIndex = r.nextInt(resultArray.length);
-                int resultNumber = resultArray[nextRandomNumberIndex];
-
-                tilesArray[i][j].setNumber(resultNumber);
-                rowSetList.get(i).remove(resultNumber);
-                columnSetList.get(j).remove(resultNumber);
-                squareSetList.get(2).remove(resultNumber);
-
-            }
-        }
-
+    public void setNumber(int number, int IDx, int IDy) {
+        tilesArray[IDx][IDy].setNumber(number/*, IDx, IDy*/);
     }
 
 }

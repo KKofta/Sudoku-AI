@@ -21,10 +21,12 @@ public class Tile extends StackPane {
         this.border.setWidth(tileSize);
         this.border.setHeight(tileSize);
         this.border.setFill(null);
-        this.border.setStroke(Color.BLACK);
+        this.border.setStroke(Color.WHITESMOKE);
         this.border.setStrokeWidth(1.5);
 
         text.setFont(Font.font(30));
+        text.setFill(Color.WHITESMOKE);
+        text.setStroke(Color.WHITESMOKE);
         text.setTextAlignment(TextAlignment.CENTER);
         setAlignment(this.border, Pos.CENTER);
         setAlignment(this.text, Pos.CENTER);
