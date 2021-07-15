@@ -44,6 +44,19 @@ public class Tile extends StackPane {
         }
         this.text.setText(numberString);
     }
+    
+    public void setCalculatedNumber(int number) {
+        //numbers calculated with algorithm in different color 
+        String numberString;
+        if (number == 0) {
+            numberString = "";
+        } else {
+            numberString = Integer.toString(number);
+        }
+        this.text.setText(numberString);
+        text.setFill(Color.YELLOW);
+        text.setStroke(Color.YELLOW);
+    }
 
     public int getNumber() {
         String numberString = this.text.getText();

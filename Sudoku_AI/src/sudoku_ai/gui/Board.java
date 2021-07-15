@@ -123,7 +123,7 @@ public class Board extends Pane {
                             Integer[] resultArray = new Integer[1];
                             resultSet.toArray(resultArray);
                             int resultNumber = resultArray[0];
-                            tilesArray[row][col].setNumber(resultNumber);
+                            tilesArray[row][col].setCalculatedNumber(resultNumber);
                             //delete chosen number from sets
                             columnSetList.get(col).remove(resultNumber);
                             rowSetList.get(row).remove(resultNumber);
