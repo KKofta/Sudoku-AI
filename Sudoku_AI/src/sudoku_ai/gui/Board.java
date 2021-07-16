@@ -14,14 +14,13 @@ public class Board extends Pane {
     private static List<Set> columnSetList = new ArrayList<>(9);//static?
     private static List<Set> rowSetList = new ArrayList<>(9);//static?
     private static List<Set> squareSetList = new ArrayList<>(9);//static?
-    private final double tileSize;
-    private final double boardSize;
+    private final double boardSize = 500;
+    private final double tileSize = boardSize / 9;
 
-    public Board(double boardSize) {
+    public Board() {
 
-        this.boardSize = boardSize;
-        this.tileSize = this.boardSize / 9;
-
+        //this.boardSize = boardSize;
+        //this.tileSize = this.boardSize / 9;
         createWiderLines();
         createGrid();
     }
@@ -92,7 +91,7 @@ public class Board extends Pane {
             }
         }
     }
-    
+
     public void loadHardBoard() {
         initializeLists();
 
@@ -120,46 +119,13 @@ public class Board extends Pane {
     }
 
     public void solveSudoku() {
-        /*Algorithm: 
-        We loop through columns and rows and look for empty tiles. 
-        In empty tiles we calculate intersection of set of rows, set of columns and set of squares.
-        If the resulting set contains only one number it means that it's the only possible number to enter.
-         */
-        Set<Integer> basicSet = new HashSet<>();
+        Solver solver = new Solver(tilesArray, columnSetList, rowSetList, squareSetList);
+        solver.solveSudoku();
+    }
 
-        for (int i = 1; i <= 9; i++) {
-            basicSet.add(i);
-        }
-
-        while (isAlgorithmFinished() == false) {
-            for (int row = 0; row < 9; row++) {
-                for (int col = 0; col < 9; col++) {
-                    if (tilesArray[row][col].getNumber() == 0) {
-                        //additional set to avoid unintended destruction
-                        Set<Integer> resultSet = new HashSet<>(basicSet);
-                        //check col
-                        resultSet.retainAll(columnSetList.get(col));
-                        //check row
-                        resultSet.retainAll(rowSetList.get(row));
-                        //check square
-                        int squareIndex = calculateSquareIndex(row, col);
-                        resultSet.retainAll(squareSetList.get(squareIndex));
-
-                        if (resultSet.size() == 1) {
-                            //display the only possible number after intersections
-                            Integer[] resultArray = new Integer[1];
-                            resultSet.toArray(resultArray);
-                            int resultNumber = resultArray[0];
-                            tilesArray[row][col].setCalculatedNumber(resultNumber);
-                            //delete chosen number from sets
-                            columnSetList.get(col).remove(resultNumber);
-                            rowSetList.get(row).remove(resultNumber);
-                            squareSetList.get(squareIndex).remove(resultNumber);
-                        }
-                    }
-                }
-            }
-        }
+    public void animateSolver() {
+        SolverAnimation solverAnimation = new SolverAnimation(tilesArray, columnSetList, rowSetList, squareSetList);
+        solverAnimation.start();
     }
 
     private static void initializeLists() {
@@ -200,20 +166,6 @@ public class Board extends Pane {
                 break;
         }
         return squareIndex;
-    }
-
-    private static boolean isAlgorithmFinished() {
-
-        for (int i = 0; i < 9; i++) {
-            if (columnSetList.get(i).isEmpty() == false || rowSetList.get(i).isEmpty() == false || squareSetList.get(i).isEmpty() == false) {
-                return false;
-            }
-        }
-        //idk if here is fine
-        columnSetList.clear();
-        rowSetList.clear();
-        squareSetList.clear();
-        return true;
     }
 
     public void setNumber(int number, int IDx, int IDy) {

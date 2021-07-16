@@ -19,15 +19,15 @@ public class GUI extends Application {
     private static final double HEIGHT = 600;
     private static final double WIDTH = 800;
     //private static final double BOARD_SIZE = HEIGHT - HEIGHT * 0.2;
-    private static final double BOARD_SIZE = 500;
+    //private static final double BOARD_SIZE = 500;
 
-    private Board gameArea = new Board(BOARD_SIZE);
+    private Board gameArea = new Board();
 
     @Override
     public void start(Stage primaryStage) {
 
         BorderPane root = new BorderPane();
-        root.setPadding(new Insets(15,15,15,15));
+        root.setPadding(new Insets(15, 15, 15, 15));
 
         createTitle(root, primaryStage);
         createMenu(root, primaryStage);
@@ -69,14 +69,34 @@ public class GUI extends Application {
         menu.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.));
         menu.setPadding(new Insets(10, 20, 15, 0));
 
+        //Solvers boards area
+        Label solversLabel = new Label("Solve Boards");
+        HBox solversHBox = new HBox(10);
+        Button solveButton = new Button("First Algorithm");
+        solveButton.setOnAction(e -> gameArea.solveSudoku());
+        Button solveVisButton = new Button("Viusalize");
+        solveVisButton.setOnAction(e -> gameArea.animateSolver());
+        //action
+        disableSolveButtons(solveButton, solveVisButton, true);
+        solversHBox.getChildren().addAll(solveButton, solveVisButton);
+        solversHBox.setPadding(new Insets(0, 0, 25, 0));
+
+        //Sample boards area
         Label samplesLabel = new Label("Load Sample Boards");
         HBox samplesHBox = new HBox(10);
         Button easyButton = new Button("Easy Board");
-        easyButton.setOnAction(e -> gameArea.loadEasyBoard());
+        easyButton.setOnAction(e -> {
+            gameArea.loadEasyBoard();
+            disableSolveButtons(solveButton, solveVisButton, false);
+        });
         Button hardButton = new Button("Hard Board");
-        hardButton.setOnAction(e -> gameArea.loadHardBoard());
+        hardButton.setOnAction(e -> {
+            gameArea.loadHardBoard();
+            disableSolveButtons(solveButton, solveVisButton, false);
+        });
         samplesHBox.getChildren().addAll(easyButton, hardButton);
 
+        //Generate boards area
         Label generatorsLabel = new Label("Generate Boards");
         HBox generatorsHBox = new HBox(10);
         Button generateButton = new Button("Generate");
@@ -85,18 +105,14 @@ public class GUI extends Application {
         //action
         generatorsHBox.getChildren().addAll(generateButton, generateVisButton);
 
-        Label solversLabel = new Label("Solve Boards");
-        HBox solversHBox = new HBox(10);
-        Button solveButton = new Button("First Algorithm");
-        solveButton.setOnAction(e -> gameArea.solveSudoku());
-        Button solveVisButton = new Button("Viusalize");
-        //action
-        solversHBox.getChildren().addAll(solveButton, solveVisButton);
-        solversHBox.setPadding(new Insets(0,0,25,0));
-        
+        //clear board area
         Button clearButton = new Button("Clear Board");
-        clearButton.setOnAction(e -> gameArea.clearBoard());
+        clearButton.setOnAction(e -> {
+            gameArea.clearBoard();
+            disableSolveButtons(solveButton, solveVisButton, true);
+        });
 
+        //exit area
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> primaryStage.close());
 
@@ -104,6 +120,11 @@ public class GUI extends Application {
                 solversLabel, solversHBox, clearButton, exitButton);
 
         root.setRight(menu);
+    }
+
+    private void disableSolveButtons(Button button1, Button button2, boolean disable) {
+        button1.setDisable(disable);
+        button2.setDisable(disable);
     }
 
 }

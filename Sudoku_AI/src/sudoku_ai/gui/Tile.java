@@ -74,10 +74,18 @@ public class Tile extends StackPane {
 
     public int getIDy() {
         return this.IDy;
+    }*/
     
     public void setGreenBorderColor() {
         this.border.setStroke(Color.GREEN);
+        this.border.setStrokeWidth(4);
+        this.border.setStyle("-fx-stroke: green; -fx-stroke-width: 4");
     }
-    }*/
+    
+    public void setWhiteBorderColor() {
+        this.border.setStroke(Color.WHITESMOKE);
+        this.border.setStrokeWidth(4);
+        this.border.setStyle("-fx-stroke: whitesmoke; -fx-stroke-width: 1.5");
+    }
     
 }
