@@ -45,21 +45,142 @@ public class Solver {
                         int squareIndex = calculateSquareIndex(row, col);
                         resultSet.retainAll(squareSetList.get(squareIndex));
 
+                        Integer[] resultArray = new Integer[resultSet.size()];
+                        resultSet.toArray(resultArray);
+
                         if (resultSet.size() == 1) {
                             //display the only possible number after intersections
-                            Integer[] resultArray = new Integer[1];
-                            resultSet.toArray(resultArray);
+                            //Integer[] resultArray = new Integer[1];
+                            //resultSet.toArray(resultArray);
                             int resultNumber = resultArray[0];
                             tilesArray[row][col].setCalculatedNumber(resultNumber);
                             //delete chosen number from sets
                             columnSetList.get(col).remove(resultNumber);
                             rowSetList.get(row).remove(resultNumber);
                             squareSetList.get(squareIndex).remove(resultNumber);
+                        } else {
+                            int resultNumber = method2(row, col, resultArray);
+                            if (resultNumber != 0) {
+                                tilesArray[row][col].setCalculatedNumber(resultNumber);
+                                //delete chosen number from sets
+                                columnSetList.get(col).remove(resultNumber);
+                                rowSetList.get(row).remove(resultNumber);
+                                squareSetList.get(squareIndex).remove(resultNumber);
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private int method2(int row, int col, Integer[] array) {
+
+        for (int i = 0; i < array.length; i++) {
+            int count = 0;
+            //check rows
+            if (row == 0 || row == 3 || row == 6) {
+                if (rowSetList.get(row + 1).contains(array[i]) && rowSetList.get(row + 2).contains(array[i])) {
+                    count++;
+                }
+            } else if (row == 1 || row == 4 || row == 7) {
+                if (rowSetList.get(row - 1).contains(array[i]) && rowSetList.get(row + 1).contains(array[i])) {
+                    count++;
+                }
+            } else {
+                if (rowSetList.get(row - 1).contains(array[i]) && rowSetList.get(row - 2).contains(array[i])) {
+                    count++;
+                }
+            }
+
+            //check columns
+            if (col == 0 || col == 3 || col == 6) {
+                if (columnSetList.get(col + 1).contains(array[i]) && columnSetList.get(col + 2).contains(array[i])) {
+                    count++;
+                }
+            } else if (col == 1 || col == 4 || col == 7) {
+                if (columnSetList.get(col - 1).contains(array[i]) && columnSetList.get(col + 1).contains(array[i])) {
+                    count++;
+                }
+            } else {
+                if (columnSetList.get(col - 1).contains(array[i]) && columnSetList.get(col - 2).contains(array[i])) {
+                    count++;
+                }
+            }
+
+            if (count == 2) {
+                return array[i];
+            }
+        }
+        return 0;
+    }
+
+    public void solveSudokuNaive() {
+        naiveAlgorithm(0, 0);
+    }
+
+    private boolean naiveAlgorithm(int row, int col) {
+
+        if (isFinished(row, col)) {
+            return true;
+        }
+
+        if (col == 9) {
+            row++;
+            col = 0;
+        }
+
+        if (tilesArray[row][col].getNumber() != 0) {
+            naiveAlgorithm(row, col + 1);
+        }
+
+        for (int n = 1; n <= 9; n++) {
+
+            int squareIndex = calculateSquareIndex(row, col);
+
+            if (isPossible(row, col, n)) {
+                tilesArray[row][col].setCalculatedNumber(n);
+
+                columnSetList.get(col).remove(n);
+                rowSetList.get(row).remove(n);
+                squareSetList.get(squareIndex).remove(n);
+
+                if (naiveAlgorithm(row, col + 1)) {
+                    return true;
+                }
+            }
+
+            tilesArray[row][col].setCalculatedNumber(0);
+
+            columnSetList.get(col).add(n);
+            rowSetList.get(row).add(n);
+            squareSetList.get(squareIndex).add(n);
+        }
+        return false;
+    }
+
+    private boolean isFinished(int row, int col) {
+        return row == 8 && col == 9;
+    }
+
+    private boolean isPossible(int row, int col, int number) {
+        Set<Integer> basicSet = new HashSet<>();
+
+        for (int i = 1; i <= 9; i++) {
+            basicSet.add(i);
+        }
+
+        //additional set to avoid unintended destruction
+        Set<Integer> resultSet = new HashSet<>(basicSet);
+        //check col
+        resultSet.retainAll(columnSetList.get(col));
+        //check row
+        resultSet.retainAll(rowSetList.get(row));
+        //check square
+        int squareIndex = calculateSquareIndex(row, col);
+        resultSet.retainAll(squareSetList.get(squareIndex));
+
+        return resultSet.contains(number);
     }
 
     private int calculateSquareIndex(int row, int col) {

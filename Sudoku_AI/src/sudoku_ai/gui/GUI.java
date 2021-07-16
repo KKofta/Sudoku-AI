@@ -75,7 +75,7 @@ public class GUI extends Application {
         Button solveButton = new Button("First Algorithm");
         solveButton.setOnAction(e -> gameArea.solveSudoku());
         Button solveVisButton = new Button("Viusalize");
-        solveVisButton.setOnAction(e -> gameArea.animateSolver());
+        solveVisButton.setOnAction(e -> gameArea.animateSolverNaive());
         //action
         disableSolveButtons(solveButton, solveVisButton, true);
         solversHBox.getChildren().addAll(solveButton, solveVisButton);
@@ -86,7 +86,7 @@ public class GUI extends Application {
         HBox samplesHBox = new HBox(10);
         Button easyButton = new Button("Easy Board");
         easyButton.setOnAction(e -> {
-            gameArea.loadEasyBoard();
+            gameArea.loadIntermediateBoard();
             disableSolveButtons(solveButton, solveVisButton, false);
         });
         Button hardButton = new Button("Hard Board");

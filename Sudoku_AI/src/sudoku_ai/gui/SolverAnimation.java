@@ -42,9 +42,9 @@ public class SolverAnimation extends Thread {
                 for (int col = 0; col < 9; col++) {
                     //long endTime = System.currentTimeMillis();
                     //long startTime = System.currentTimeMillis();
-                    tilesArray[row][col].setGreenBorderColor();
-                    wait(50);
                     if (tilesArray[row][col].getNumber() == 0) {
+                        tilesArray[row][col].setGreenBorderColor();
+                        wait(100);
                         //additional set to avoid unintended destruction
                         Set<Integer> resultSet = new HashSet<>(basicSet);
                         //check col
@@ -54,26 +54,38 @@ public class SolverAnimation extends Thread {
                         //check square
                         int squareIndex = calculateSquareIndex(row, col);
                         resultSet.retainAll(squareSetList.get(squareIndex));
+                        
+                        Integer[] resultArray = new Integer[resultSet.size()];
+                        resultSet.toArray(resultArray);
 
                         if (resultSet.size() == 1) {
                             //display the only possible number after intersections
-                            Integer[] resultArray = new Integer[1];
-                            resultSet.toArray(resultArray);
+                            //Integer[] resultArray = new Integer[1];
+                            //resultSet.toArray(resultArray);
                             int resultNumber = resultArray[0];
                             tilesArray[row][col].setCalculatedNumber(resultNumber);
                             //delete chosen number from sets
                             columnSetList.get(col).remove(resultNumber);
                             rowSetList.get(row).remove(resultNumber);
                             squareSetList.get(squareIndex).remove(resultNumber);
+                        } else {
+                            int resultNumber = method2(row, col, resultArray);
+                            if (resultNumber != 0) {
+                                tilesArray[row][col].setCalculatedNumber(resultNumber);
+                                //delete chosen number from sets
+                                columnSetList.get(col).remove(resultNumber);
+                                rowSetList.get(row).remove(resultNumber);
+                                squareSetList.get(squareIndex).remove(resultNumber);
+                            }
                         }
+                        tilesArray[row][col].setWhiteBorderColor();
                     }
-                    tilesArray[row][col].setWhiteBorderColor();
                 }
             }
         }
         stop();
     }
-    
+
     private int calculateSquareIndex(int row, int col) {
         int squareIndex = 0;
         int x = row / 3;
@@ -113,8 +125,45 @@ public class SolverAnimation extends Thread {
         return true;
     }
     
-    public void stopSimulation(){
-        stop();
-    }
+    private int method2(int row, int col, Integer[] array) {
 
+        for (int i = 0; i < array.length; i++) {
+            int count = 0;
+            //check rows
+            if (row == 0 || row == 3 || row == 6) {
+                if (!rowSetList.get(row + 1).contains(array[i]) && !rowSetList.get(row + 2).contains(array[i])) {
+                    count++;
+                }
+            } else if (row == 1 || row == 4 || row == 7) {
+                if (!rowSetList.get(row - 1).contains(array[i]) && !rowSetList.get(row + 1).contains(array[i])) {
+                    count++;
+                }
+            } else {
+                if (!rowSetList.get(row - 1).contains(array[i]) && !rowSetList.get(row - 2).contains(array[i])) {
+                    count++;
+                }
+            }
+
+            //check columns
+            if (col == 0 || col == 3 || col == 6) {
+                if (!columnSetList.get(col + 1).contains(array[i]) && !columnSetList.get(col + 2).contains(array[i])) {
+                    count++;
+                }
+            } else if (col == 1 || col == 4 || col == 7) {
+                if (!columnSetList.get(col - 1).contains(array[i]) && !columnSetList.get(col + 1).contains(array[i])) {
+                    count++;
+                }
+            } else {
+                if (!columnSetList.get(col - 1).contains(array[i]) && !columnSetList.get(col - 2).contains(array[i])) {
+                    count++;
+                }
+            }
+
+            if (count == 2) {
+                return array[i];
+            }
+        }
+        return 0;
+    }
+    
 }

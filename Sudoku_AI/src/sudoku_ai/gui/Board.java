@@ -11,9 +11,9 @@ import javafx.scene.shape.Line;
 public class Board extends Pane {
 
     private final Tile[][] tilesArray = new Tile[9][9];
-    private static List<Set> columnSetList = new ArrayList<>(9);//static?
-    private static List<Set> rowSetList = new ArrayList<>(9);//static?
-    private static List<Set> squareSetList = new ArrayList<>(9);//static?
+    private static List<Set> columnSetList = new ArrayList<>(9);
+    private static List<Set> rowSetList = new ArrayList<>(9);
+    private static List<Set> squareSetList = new ArrayList<>(9);
     private final double boardSize = 500;
     private final double tileSize = boardSize / 9;
 
@@ -117,6 +117,42 @@ public class Board extends Pane {
             }
         }
     }
+    
+    public void loadIntermediateBoard() {
+        initializeLists();
+
+        int[][] sampleArray = {
+            {0, 2, 0, 6, 0, 8, 0, 0, 0},
+            {5, 8, 0, 0, 0, 9, 7, 0, 0},
+            {0, 0, 0, 0, 4, 0, 0, 0, 0},
+            {3, 7, 0, 0, 0, 0, 5, 0, 0},
+            {6, 0, 0, 0, 0, 0, 0, 0, 4},
+            {0, 0, 8, 0, 0, 0, 0, 1, 3},
+            {0, 0, 0, 0, 2, 0, 0, 0, 0},
+            {0, 0, 9, 8, 0, 0, 0, 3, 6},
+            {0, 0, 0, 3, 0, 6, 0, 9, 0}};
+
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                int number = sampleArray[row][col];
+                tilesArray[row][col].setNumber(number/*, i, j*/);
+                columnSetList.get(col).remove(number);
+                rowSetList.get(row).remove(number);
+                int squareIndex = calculateSquareIndex(row, col);
+                squareSetList.get(squareIndex).remove(number);
+            }
+        }
+    }
+    
+    public void solveSudokuNaive(){
+        Solver solverNaive = new Solver(tilesArray, columnSetList, rowSetList, squareSetList);
+        solverNaive.solveSudokuNaive();
+    }
+    
+    public void animateSolverNaive(){
+        NaiveAnimation naiveAnimation = new NaiveAnimation(tilesArray, columnSetList, rowSetList, squareSetList);
+        naiveAnimation.start();
+    }
 
     public void solveSudoku() {
         Solver solver = new Solver(tilesArray, columnSetList, rowSetList, squareSetList);
@@ -129,6 +165,9 @@ public class Board extends Pane {
     }
 
     private static void initializeLists() {
+        columnSetList.clear();
+        rowSetList.clear();
+        squareSetList.clear();
 
         Set<Integer> basicSet = new HashSet<>();
 
