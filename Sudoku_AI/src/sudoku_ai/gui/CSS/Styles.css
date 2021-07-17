@@ -6,7 +6,7 @@
     -fx-background-color: #7CAFC2;
     -fx-text-fill: whitesmoke;
     -fx-background-radius: 10px;
-    -fx-font-size: 14px
+    -fx-font-size: 13px
 }
 
 .button:hover {
@@ -23,5 +23,5 @@
 
 .label {
     -fx-text-fill: whitesmoke;
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
 }

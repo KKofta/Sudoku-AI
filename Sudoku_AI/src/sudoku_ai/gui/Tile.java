@@ -12,12 +12,8 @@ public class Tile extends StackPane {
 
     private Rectangle border = new Rectangle();
     private Text text = new Text();
-    //private final int IDx;
-    //private final int IDy;
 
-    public Tile(double tileSize/*, int IDx, int IDy*/) {
-        //this.IDx = IDx;
-        //this.IDy = IDy;
+    public Tile(double tileSize) {
         this.border.setWidth(tileSize);
         this.border.setHeight(tileSize);
         this.border.setFill(null);
@@ -35,7 +31,7 @@ public class Tile extends StackPane {
         getChildren().addAll(this.border, this.text);
     }
 
-    public void setNumber(int number/*, int IDx, int IDy*/) {
+    public void setNumber(int number) {
         String numberString;
         if (number == 0) {
             numberString = "";
@@ -46,9 +42,9 @@ public class Tile extends StackPane {
         text.setFill(Color.WHITESMOKE);
         text.setStroke(Color.WHITESMOKE);
     }
-    
+
     public void setCalculatedNumber(int number) {
-        //numbers calculated with algorithm in different color 
+        //numbers calculated with algorithm are in different color 
         String numberString;
         if (number == 0) {
             numberString = "";
@@ -68,24 +64,16 @@ public class Tile extends StackPane {
         return Integer.parseInt(numberString);
     }
 
-    /*public int getIDx() {
-        return this.IDx;
-    }
-
-    public int getIDy() {
-        return this.IDy;
-    }*/
-    
     public void setGreenBorderColor() {
         this.border.setStroke(Color.GREEN);
         this.border.setStrokeWidth(4);
         this.border.setStyle("-fx-stroke: green; -fx-stroke-width: 4");
     }
-    
+
     public void setWhiteBorderColor() {
         this.border.setStroke(Color.WHITESMOKE);
-        this.border.setStrokeWidth(4);
+        this.border.setStrokeWidth(1.5);
         this.border.setStyle("-fx-stroke: whitesmoke; -fx-stroke-width: 1.5");
     }
-    
+
 }

@@ -4,22 +4,30 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Solver {
+public class EasySolver extends Thread {
 
     private Tile[][] tilesArray = new Tile[9][9];
     private static List<Set> columnSetList = new ArrayList<>(9);
     private static List<Set> rowSetList = new ArrayList<>(9);
     private static List<Set> squareSetList = new ArrayList<>(9);
 
-    public Solver(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
+    public EasySolver(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
         this.tilesArray = tilesArray;
         this.columnSetList = columnSetList;
         this.rowSetList = rowSetList;
         this.squareSetList = squareSetList;
     }
 
-    public void solveSudoku() {
+    @Override
+    public void run() {
+        solveSudoku(true);
+        stop();
+    }
+
+    public synchronized void solveSudoku(boolean isAnimation) {
         /*Algorithm: 
         We loop through columns and rows and look for empty tiles. 
         In empty tiles we calculate intersection of set of rows, set of columns and set of squares.
@@ -35,6 +43,14 @@ public class Solver {
             for (int row = 0; row < 9; row++) {
                 for (int col = 0; col < 9; col++) {
                     if (tilesArray[row][col].getNumber() == 0) {
+                        if (isAnimation) {
+                            tilesArray[row][col].setGreenBorderColor();
+                            try {
+                                wait(100);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(EasySolver.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                         //additional set to avoid unintended destruction
                         Set<Integer> resultSet = new HashSet<>(basicSet);
                         //check col
@@ -68,6 +84,9 @@ public class Solver {
                                 squareSetList.get(squareIndex).remove(resultNumber);
                             }
                         }
+                        if (isAnimation) {
+                            tilesArray[row][col].setWhiteBorderColor();
+                        }
                     }
                 }
             }
@@ -80,30 +99,30 @@ public class Solver {
             int count = 0;
             //check rows
             if (row == 0 || row == 3 || row == 6) {
-                if (rowSetList.get(row + 1).contains(array[i]) && rowSetList.get(row + 2).contains(array[i])) {
+                if (!rowSetList.get(row + 1).contains(array[i]) && !rowSetList.get(row + 2).contains(array[i])) {
                     count++;
                 }
             } else if (row == 1 || row == 4 || row == 7) {
-                if (rowSetList.get(row - 1).contains(array[i]) && rowSetList.get(row + 1).contains(array[i])) {
+                if (!rowSetList.get(row - 1).contains(array[i]) && !rowSetList.get(row + 1).contains(array[i])) {
                     count++;
                 }
             } else {
-                if (rowSetList.get(row - 1).contains(array[i]) && rowSetList.get(row - 2).contains(array[i])) {
+                if (!rowSetList.get(row - 1).contains(array[i]) && !rowSetList.get(row - 2).contains(array[i])) {
                     count++;
                 }
             }
 
             //check columns
             if (col == 0 || col == 3 || col == 6) {
-                if (columnSetList.get(col + 1).contains(array[i]) && columnSetList.get(col + 2).contains(array[i])) {
+                if (!columnSetList.get(col + 1).contains(array[i]) && !columnSetList.get(col + 2).contains(array[i])) {
                     count++;
                 }
             } else if (col == 1 || col == 4 || col == 7) {
-                if (columnSetList.get(col - 1).contains(array[i]) && columnSetList.get(col + 1).contains(array[i])) {
+                if (!columnSetList.get(col - 1).contains(array[i]) && !columnSetList.get(col + 1).contains(array[i])) {
                     count++;
                 }
             } else {
-                if (columnSetList.get(col - 1).contains(array[i]) && columnSetList.get(col - 2).contains(array[i])) {
+                if (!columnSetList.get(col - 1).contains(array[i]) && !columnSetList.get(col - 2).contains(array[i])) {
                     count++;
                 }
             }
@@ -113,74 +132,6 @@ public class Solver {
             }
         }
         return 0;
-    }
-
-    public void solveSudokuNaive() {
-        naiveAlgorithm(0, 0);
-    }
-
-    private boolean naiveAlgorithm(int row, int col) {
-
-        if (isFinished(row, col)) {
-            return true;
-        }
-
-        if (col == 9) {
-            row++;
-            col = 0;
-        }
-
-        if (tilesArray[row][col].getNumber() != 0) {
-            naiveAlgorithm(row, col + 1);
-        }
-
-        for (int n = 1; n <= 9; n++) {
-
-            int squareIndex = calculateSquareIndex(row, col);
-
-            if (isPossible(row, col, n)) {
-                tilesArray[row][col].setCalculatedNumber(n);
-
-                columnSetList.get(col).remove(n);
-                rowSetList.get(row).remove(n);
-                squareSetList.get(squareIndex).remove(n);
-
-                if (naiveAlgorithm(row, col + 1)) {
-                    return true;
-                }
-            }
-
-            tilesArray[row][col].setCalculatedNumber(0);
-
-            columnSetList.get(col).add(n);
-            rowSetList.get(row).add(n);
-            squareSetList.get(squareIndex).add(n);
-        }
-        return false;
-    }
-
-    private boolean isFinished(int row, int col) {
-        return row == 8 && col == 9;
-    }
-
-    private boolean isPossible(int row, int col, int number) {
-        Set<Integer> basicSet = new HashSet<>();
-
-        for (int i = 1; i <= 9; i++) {
-            basicSet.add(i);
-        }
-
-        //additional set to avoid unintended destruction
-        Set<Integer> resultSet = new HashSet<>(basicSet);
-        //check col
-        resultSet.retainAll(columnSetList.get(col));
-        //check row
-        resultSet.retainAll(rowSetList.get(row));
-        //check square
-        int squareIndex = calculateSquareIndex(row, col);
-        resultSet.retainAll(squareSetList.get(squareIndex));
-
-        return resultSet.contains(number);
     }
 
     private int calculateSquareIndex(int row, int col) {

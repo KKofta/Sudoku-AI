@@ -16,11 +16,10 @@ public class Board extends Pane {
     private static List<Set> squareSetList = new ArrayList<>(9);
     private final double boardSize = 500;
     private final double tileSize = boardSize / 9;
+    private EasySolver easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList); //is it right?
+    private BacktrackingSolver backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList); //is it right?
 
     public Board() {
-
-        //this.boardSize = boardSize;
-        //this.tileSize = this.boardSize / 9;
         createWiderLines();
         createGrid();
     }
@@ -47,7 +46,7 @@ public class Board extends Pane {
         //we look at grid coordinates not as (X,Y), but as in 2D array
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                Tile tile = new Tile(tileSize/*, i, j*/);
+                Tile tile = new Tile(tileSize);
                 tile.setTranslateX(j * tileSize);
                 tile.setTranslateY(i * tileSize);
 
@@ -61,12 +60,14 @@ public class Board extends Pane {
     public void clearBoard() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                tilesArray[i][j].setNumber(0/*, i, j*/);
+                tilesArray[i][j].setNumber(0);
+                tilesArray[i][j].setWhiteBorderColor();
             }
         }
     }
 
     public void loadEasyBoard() {
+        clearBoard();
         initializeLists();
 
         int[][] sampleArray = {
@@ -83,7 +84,7 @@ public class Board extends Pane {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 int number = sampleArray[row][col];
-                tilesArray[row][col].setNumber(number/*, i, j*/);
+                tilesArray[row][col].setNumber(number);
                 columnSetList.get(col).remove(number);
                 rowSetList.get(row).remove(number);
                 int squareIndex = calculateSquareIndex(row, col);
@@ -92,33 +93,8 @@ public class Board extends Pane {
         }
     }
 
-    public void loadHardBoard() {
-        initializeLists();
-
-        int[][] sampleArray = {
-            {0, 0, 0, 0, 0, 0, 6, 8, 0},
-            {0, 0, 0, 0, 7, 3, 0, 0, 9},
-            {3, 0, 9, 0, 0, 0, 0, 4, 5},
-            {4, 9, 0, 0, 0, 0, 0, 0, 0},
-            {8, 0, 3, 0, 5, 0, 9, 0, 2},
-            {0, 0, 0, 0, 0, 0, 0, 3, 6},
-            {9, 6, 0, 0, 0, 0, 3, 0, 8},
-            {7, 0, 0, 6, 8, 0, 0, 0, 0},
-            {0, 2, 8, 0, 0, 0, 0, 0, 0}};
-
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-                int number = sampleArray[row][col];
-                tilesArray[row][col].setNumber(number/*, i, j*/);
-                columnSetList.get(col).remove(number);
-                rowSetList.get(row).remove(number);
-                int squareIndex = calculateSquareIndex(row, col);
-                squareSetList.get(squareIndex).remove(number);
-            }
-        }
-    }
-    
     public void loadIntermediateBoard() {
+        clearBoard();
         initializeLists();
 
         int[][] sampleArray = {
@@ -135,7 +111,34 @@ public class Board extends Pane {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 int number = sampleArray[row][col];
-                tilesArray[row][col].setNumber(number/*, i, j*/);
+                tilesArray[row][col].setNumber(number);
+                columnSetList.get(col).remove(number);
+                rowSetList.get(row).remove(number);
+                int squareIndex = calculateSquareIndex(row, col);
+                squareSetList.get(squareIndex).remove(number);
+            }
+        }
+    }
+
+    public void loadHardBoard() {
+        clearBoard();
+        initializeLists();
+
+        int[][] sampleArray = {
+            {0, 0, 0, 0, 0, 0, 6, 8, 0},
+            {0, 0, 0, 0, 7, 3, 0, 0, 9},
+            {3, 0, 9, 0, 0, 0, 0, 4, 5},
+            {4, 9, 0, 0, 0, 0, 0, 0, 0},
+            {8, 0, 3, 0, 5, 0, 9, 0, 2},
+            {0, 0, 0, 0, 0, 0, 0, 3, 6},
+            {9, 6, 0, 0, 0, 0, 3, 0, 8},
+            {7, 0, 0, 6, 8, 0, 0, 0, 0},
+            {0, 2, 8, 0, 0, 0, 0, 0, 0}};
+
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                int number = sampleArray[row][col];
+                tilesArray[row][col].setNumber(number);
                 columnSetList.get(col).remove(number);
                 rowSetList.get(row).remove(number);
                 int squareIndex = calculateSquareIndex(row, col);
@@ -144,24 +147,60 @@ public class Board extends Pane {
         }
     }
     
-    public void solveSudokuNaive(){
-        Solver solverNaive = new Solver(tilesArray, columnSetList, rowSetList, squareSetList);
-        solverNaive.solveSudokuNaive();
-    }
-    
-    public void animateSolverNaive(){
-        NaiveAnimation naiveAnimation = new NaiveAnimation(tilesArray, columnSetList, rowSetList, squareSetList);
-        naiveAnimation.start();
+    public void loadNotFunBoard() {
+        clearBoard();
+        initializeLists();
+
+        int[][] sampleArray = {
+            {0, 2, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 6, 0, 0, 0, 0, 3},
+            {0, 7, 4, 0, 8, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 3, 0, 0, 2},
+            {0, 8, 0, 0, 4, 0, 0, 1, 0},
+            {6, 0, 0, 5, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 7, 8, 0},
+            {5, 0, 0, 0, 0, 9, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 4, 0}};
+
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                int number = sampleArray[row][col];
+                tilesArray[row][col].setNumber(number);
+                columnSetList.get(col).remove(number);
+                rowSetList.get(row).remove(number);
+                int squareIndex = calculateSquareIndex(row, col);
+                squareSetList.get(squareIndex).remove(number);
+            }
+        }
     }
 
-    public void solveSudoku() {
-        Solver solver = new Solver(tilesArray, columnSetList, rowSetList, squareSetList);
-        solver.solveSudoku();
+    public void solveEasySudoku() {
+        easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList);
+        easySolver.solveSudoku(false);
     }
 
-    public void animateSolver() {
-        SolverAnimation solverAnimation = new SolverAnimation(tilesArray, columnSetList, rowSetList, squareSetList);
-        solverAnimation.start();
+    public void animateEasySudoku() {
+        easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList);
+        easySolver.start();
+    }
+
+    public void stopEasyAnimation() {
+        easySolver.stop();
+    }
+
+    public void solveBacktrackingSudoku() {
+        backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList);
+        backtrackingSolver.solveSudokuWithBacktracking(false);
+    }
+
+    public void animateBacktrackingSudoku() {
+        backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList);
+        backtrackingSolver.start();
+    }
+
+    public void stopBacktrackingAnimation() {
+        easySolver.stop();
+        backtrackingSolver.stop();
     }
 
     private static void initializeLists() {
@@ -208,7 +247,7 @@ public class Board extends Pane {
     }
 
     public void setNumber(int number, int IDx, int IDy) {
-        tilesArray[IDx][IDy].setNumber(number/*, IDx, IDy*/);
+        tilesArray[IDx][IDy].setNumber(number);
     }
 
 }

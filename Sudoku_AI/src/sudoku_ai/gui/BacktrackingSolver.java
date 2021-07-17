@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NaiveAnimation extends Thread {
+public class BacktrackingSolver extends Thread {
 
     private Tile[][] tilesArray = new Tile[9][9];
     private static List<Set> columnSetList = new ArrayList<>(9);
@@ -15,7 +15,7 @@ public class NaiveAnimation extends Thread {
     private static List<Set> squareSetList = new ArrayList<>(9);
     Set<Integer> basicSet = createBasicSet();
 
-    public NaiveAnimation(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
+    public BacktrackingSolver(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
         this.tilesArray = tilesArray;
         this.columnSetList = columnSetList;
         this.rowSetList = rowSetList;
@@ -24,19 +24,15 @@ public class NaiveAnimation extends Thread {
 
     @Override
     public void run() {
-        try {
-            animateNaiveAlgorithm();
-            stop();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        solveSudokuWithBacktracking(true);
+        stop();
     }
 
-    private void animateNaiveAlgorithm() throws InterruptedException {
-        naiveAlgorithm(0, 0);
+    public void solveSudokuWithBacktracking(boolean isAnimation) {
+        backtrackingAlgorithm(0, 0, isAnimation);
     }
 
-    private synchronized boolean naiveAlgorithm(int row, int col) throws InterruptedException {
+    private synchronized boolean backtrackingAlgorithm(int row, int col, boolean isAnimation) {
 
         if (isFinished(row, col)) {
             return true;
@@ -48,8 +44,7 @@ public class NaiveAnimation extends Thread {
         }
 
         if (tilesArray[row][col].getNumber() != 0) {
-            //naiveAlgorithm(row, col + 1);
-            if (naiveAlgorithm(row, col + 1)) {
+            if (backtrackingAlgorithm(row, col + 1, isAnimation)) {
                 return true;
             }
         } else {
@@ -60,13 +55,17 @@ public class NaiveAnimation extends Thread {
 
                 if (isPossible(row, col, squareIndex, n)) {
                     tilesArray[row][col].setCalculatedNumber(n);
-                    wait(40);
+                    try {
+                        wait(40);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(BacktrackingSolver.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                     columnSetList.get(col).remove(n);
                     rowSetList.get(row).remove(n);
                     squareSetList.get(squareIndex).remove(n);
 
-                    if (naiveAlgorithm(row, col + 1)) {
+                    if (backtrackingAlgorithm(row, col + 1, isAnimation)) {
                         return true;
                     } else {
                         tilesArray[row][col].setCalculatedNumber(0);
@@ -97,8 +96,6 @@ public class NaiveAnimation extends Thread {
         //check square
         resultSet.retainAll(squareSetList.get(squareIndex));
         //resultSet contains possible numbers to enter
-        //System.out.println("RowSet: " + rowSetList.get(row) + "ColumnSet: " + columnSetList.get(col) + "SquareSet: " + squareSetList.get(squareIndex));
-        //System.out.println(row + " , " + col + " : " + resultSet);
         return resultSet.contains(number);
     }
 
@@ -126,7 +123,7 @@ public class NaiveAnimation extends Thread {
         }
         return squareIndex;
     }
-
+    
     private Set<Integer> createBasicSet() {
         basicSet = new HashSet<>();
         for (int i = 1; i <= 9; i++) {
