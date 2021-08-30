@@ -25,3 +25,22 @@
     -fx-text-fill: whitesmoke;
     -fx-font-size: 15px;
 }
+
+.check-box {
+    -fx-text-fill: whitesmoke;
+    -fx-font-size: 13px;
+}
+
+.alert {
+    -fx-text-fill: whitesmoke;
+    -fx-font-size: 13px;
+}
+
+.dialog-pane {
+    -fx-background-color: #383838;
+    -fx-text-fill: whitesmoke;    
+}
+
+.dialog-pane:header .header-panel {
+    -fx-background-color: #383838;
+}

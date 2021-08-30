@@ -16,8 +16,9 @@ public class Board extends Pane {
     private static List<Set> squareSetList = new ArrayList<>(9);
     private final double boardSize = 500;
     private final double tileSize = boardSize / 9;
-    private EasySolver easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList); //is it right?
-    private BacktrackingSolver backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList); //is it right?
+    private EasySolver easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList);
+    private BacktrackingSolver backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList);
+    private boolean assistance = false;
 
     public Board() {
         createWiderLines();
@@ -53,6 +54,8 @@ public class Board extends Pane {
                 getChildren().addAll(tile);
 
                 tilesArray[i][j] = tile;
+                tile.setRow(i);
+                tile.setColumn(j);
             }
         }
     }
@@ -62,8 +65,11 @@ public class Board extends Pane {
             for (int j = 0; j < 9; j++) {
                 tilesArray[i][j].setNumber(0);
                 tilesArray[i][j].setWhiteBorderColor();
+                tilesArray[i][j].turnOffTile();
             }
         }
+        easySolver.stop();
+        backtrackingSolver.stop();
     }
 
     public void loadEasyBoard() {
@@ -85,10 +91,7 @@ public class Board extends Pane {
             for (int col = 0; col < 9; col++) {
                 int number = sampleArray[row][col];
                 tilesArray[row][col].setNumber(number);
-                columnSetList.get(col).remove(number);
-                rowSetList.get(row).remove(number);
-                int squareIndex = calculateSquareIndex(row, col);
-                squareSetList.get(squareIndex).remove(number);
+                removeFromSets(row, col, number);
             }
         }
     }
@@ -112,10 +115,7 @@ public class Board extends Pane {
             for (int col = 0; col < 9; col++) {
                 int number = sampleArray[row][col];
                 tilesArray[row][col].setNumber(number);
-                columnSetList.get(col).remove(number);
-                rowSetList.get(row).remove(number);
-                int squareIndex = calculateSquareIndex(row, col);
-                squareSetList.get(squareIndex).remove(number);
+                removeFromSets(row, col, number);
             }
         }
     }
@@ -139,14 +139,11 @@ public class Board extends Pane {
             for (int col = 0; col < 9; col++) {
                 int number = sampleArray[row][col];
                 tilesArray[row][col].setNumber(number);
-                columnSetList.get(col).remove(number);
-                rowSetList.get(row).remove(number);
-                int squareIndex = calculateSquareIndex(row, col);
-                squareSetList.get(squareIndex).remove(number);
+                removeFromSets(row, col, number);
             }
         }
     }
-    
+
     public void loadNotFunBoard() {
         clearBoard();
         initializeLists();
@@ -166,17 +163,9 @@ public class Board extends Pane {
             for (int col = 0; col < 9; col++) {
                 int number = sampleArray[row][col];
                 tilesArray[row][col].setNumber(number);
-                columnSetList.get(col).remove(number);
-                rowSetList.get(row).remove(number);
-                int squareIndex = calculateSquareIndex(row, col);
-                squareSetList.get(squareIndex).remove(number);
+                removeFromSets(row, col, number);
             }
         }
-    }
-
-    public void solveEasySudoku() {
-        easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList);
-        easySolver.solveSudoku(false);
     }
 
     public void animateEasySudoku() {
@@ -184,21 +173,12 @@ public class Board extends Pane {
         easySolver.start();
     }
 
-    public void stopEasyAnimation() {
-        easySolver.stop();
-    }
-
-    public void solveBacktrackingSudoku() {
-        backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList);
-        backtrackingSolver.solveSudokuWithBacktracking(false);
-    }
-
     public void animateBacktrackingSudoku() {
         backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList);
         backtrackingSolver.start();
     }
 
-    public void stopBacktrackingAnimation() {
+    public void stopAnimation() {
         easySolver.stop();
         backtrackingSolver.stop();
     }
@@ -248,6 +228,115 @@ public class Board extends Pane {
 
     public void setNumber(int number, int IDx, int IDy) {
         tilesArray[IDx][IDy].setNumber(number);
+    }
+
+    public void lightRowsColsSquare(Tile tile) {
+        //clear light of previous click
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                tilesArray[i][j].turnOffTile();
+            }
+        }
+
+        //assistance (lighting)
+        int row = tile.getRow();
+        int col = tile.getColumn();
+
+        int squareRowMin;
+        int squareRowMax;
+        int squareColMin;
+        int squareColMax;
+        if (row < 3) {
+            squareRowMin = 0;
+            squareRowMax = 3;
+        } else if (row > 5) {
+            squareRowMin = 6;
+            squareRowMax = 9;
+        } else {
+            squareRowMin = 3;
+            squareRowMax = 6;
+        }
+
+        if (col < 3) {
+            squareColMin = 0;
+            squareColMax = 3;
+        } else if (col > 5) {
+            squareColMin = 6;
+            squareColMax = 9;
+        } else {
+            squareColMin = 3;
+            squareColMax = 6;
+        }
+
+        if (assistance) {
+            //light row & col
+            for (int i = 0; i < 9; i++) {
+                tilesArray[row][i].lightTile();
+                tilesArray[i][col].lightTile();
+            }
+
+            //light square
+            for (int i = squareRowMin; i < squareRowMax; i++) {
+                for (int j = squareColMin; j < squareColMax; j++) {
+                    tilesArray[i][j].lightTile();
+                }
+            }
+        }
+
+        tilesArray[row][col].lightMainTile();
+
+    }
+
+    public void turnOffRowsColsSquare() {
+        //clear lighted tiles after second click
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                tilesArray[i][j].turnOffTile();
+            }
+        }
+    }
+
+    public void tilesActionOn() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                tilesArray[i][j].setTileActionOn();
+            }
+        }
+    }
+
+    public void tilesActionOff() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                tilesArray[i][j].setTileActionOff();
+            }
+        }
+    }
+
+    public void setAssistance(boolean assistance) {
+        this.assistance = assistance;
+    }
+
+    public void removeFromSets(int row, int col, int number) {
+        columnSetList.get(col).remove(number);
+        rowSetList.get(row).remove(number);
+        int squareIndex = calculateSquareIndex(row, col);
+        squareSetList.get(squareIndex).remove(number);
+    }
+    
+    public void addToSets(int row, int col, int number) {
+        columnSetList.get(col).add(number);
+        rowSetList.get(row).add(number);
+        int squareIndex = calculateSquareIndex(row, col);
+        squareSetList.get(squareIndex).add(number);
+    }
+    
+    public boolean isBoardValid(){
+        for(int i = 0; i < 9; i++){
+            if(!columnSetList.get(i).isEmpty() || !rowSetList.get(i).isEmpty() || !squareSetList.get(i).isEmpty() ) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

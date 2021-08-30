@@ -24,15 +24,15 @@ public class BacktrackingSolver extends Thread {
 
     @Override
     public void run() {
-        solveSudokuWithBacktracking(true);
+        solveSudokuWithBacktracking();
         stop();
     }
 
-    public void solveSudokuWithBacktracking(boolean isAnimation) {
-        backtrackingAlgorithm(0, 0, isAnimation);
+    public void solveSudokuWithBacktracking() {
+        backtrackingAlgorithm(0, 0);
     }
 
-    private synchronized boolean backtrackingAlgorithm(int row, int col, boolean isAnimation) {
+    private synchronized boolean backtrackingAlgorithm(int row, int col) {
 
         if (isFinished(row, col)) {
             return true;
@@ -44,7 +44,7 @@ public class BacktrackingSolver extends Thread {
         }
 
         if (tilesArray[row][col].getNumber() != 0) {
-            if (backtrackingAlgorithm(row, col + 1, isAnimation)) {
+            if (backtrackingAlgorithm(row, col + 1)) {
                 return true;
             }
         } else {
@@ -65,7 +65,7 @@ public class BacktrackingSolver extends Thread {
                     rowSetList.get(row).remove(n);
                     squareSetList.get(squareIndex).remove(n);
 
-                    if (backtrackingAlgorithm(row, col + 1, isAnimation)) {
+                    if (backtrackingAlgorithm(row, col + 1)) {
                         return true;
                     } else {
                         tilesArray[row][col].setCalculatedNumber(0);
@@ -123,7 +123,7 @@ public class BacktrackingSolver extends Thread {
         }
         return squareIndex;
     }
-    
+
     private Set<Integer> createBasicSet() {
         basicSet = new HashSet<>();
         for (int i = 1; i <= 9; i++) {

@@ -1,6 +1,7 @@
 package sudoku_ai.gui;
 
 import javafx.geometry.Pos;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -12,18 +13,20 @@ public class Tile extends StackPane {
 
     private Rectangle border = new Rectangle();
     private Text text = new Text();
+    private int row;
+    private int col;
 
     public Tile(double tileSize) {
         this.border.setWidth(tileSize);
         this.border.setHeight(tileSize);
-        this.border.setFill(null);
+        this.border.setFill(Color.TRANSPARENT);
         this.border.setStroke(Color.WHITESMOKE);
         this.border.setStrokeWidth(1.5);
 
-        text.setFont(Font.font(30));
-        text.setFill(Color.WHITESMOKE);
-        text.setStroke(Color.WHITESMOKE);
-        text.setTextAlignment(TextAlignment.CENTER);
+        this.text.setFont(Font.font(30));
+        this.text.setFill(Color.WHITESMOKE);
+        this.text.setStroke(Color.WHITESMOKE);
+        this.text.setTextAlignment(TextAlignment.CENTER);
         setAlignment(this.border, Pos.CENTER);
         setAlignment(this.text, Pos.CENTER);
         setMaxSize(tileSize, tileSize);
@@ -52,8 +55,8 @@ public class Tile extends StackPane {
             numberString = Integer.toString(number);
         }
         this.text.setText(numberString);
-        text.setFill(Color.YELLOW);
-        text.setStroke(Color.YELLOW);
+        text.setFill(Color.GOLD);
+        text.setStroke(Color.GOLD);
     }
 
     public int getNumber() {
@@ -74,6 +77,106 @@ public class Tile extends StackPane {
         this.border.setStroke(Color.WHITESMOKE);
         this.border.setStrokeWidth(1.5);
         this.border.setStyle("-fx-stroke: whitesmoke; -fx-stroke-width: 1.5");
+    }
+
+    public void setTileActionOn() {
+        this.border.setOnMouseEntered(enter -> {
+            setGreenBorderColor();
+        });
+
+        this.border.setOnMouseExited((event) -> {
+            setWhiteBorderColor();
+        });
+
+        this.border.setOnMouseClicked(event -> {
+
+            Board gameArea = GUI.getBoard();
+
+            if (!this.text.isFocused()) {
+                gameArea.lightRowsColsSquare(this);
+
+                this.text.requestFocus();
+                if ( this.text.getText().isEmpty() || this.text.getFill().equals(Color.GOLD)) {
+                    this.text.setOnKeyPressed((e) -> {
+                        if (e.getCode().equals(KeyCode.DIGIT1)) {
+                            setCalculatedNumber(1);
+                            gameArea.removeFromSets(row, col, 1);
+                        } else if (e.getCode().equals(KeyCode.DIGIT2)) {
+                            setCalculatedNumber(2);
+                            gameArea.removeFromSets(row, col, 2);
+                        } else if (e.getCode().equals(KeyCode.DIGIT3)) {
+                            setCalculatedNumber(3);
+                            gameArea.removeFromSets(row, col, 3);
+                        } else if (e.getCode().equals(KeyCode.DIGIT4)) {
+                            setCalculatedNumber(4);
+                            gameArea.removeFromSets(row, col, 4);
+                        } else if (e.getCode().equals(KeyCode.DIGIT5)) {
+                            setCalculatedNumber(5);
+                            gameArea.removeFromSets(row, col, 5);
+                        } else if (e.getCode().equals(KeyCode.DIGIT6)) {
+                            setCalculatedNumber(6);
+                            gameArea.removeFromSets(row, col, 6);
+                        } else if (e.getCode().equals(KeyCode.DIGIT7)) {
+                            setCalculatedNumber(7);
+                            gameArea.removeFromSets(row, col, 7);
+                        } else if (e.getCode().equals(KeyCode.DIGIT8)) {
+                            setCalculatedNumber(8);
+                            gameArea.removeFromSets(row, col, 8);
+                        } else if (e.getCode().equals(KeyCode.DIGIT9)) {
+                            setCalculatedNumber(9);
+                            gameArea.removeFromSets(row, col, 9);
+                        } else if (e.getCode().equals(KeyCode.DIGIT0) || 
+                                e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
+                            int number = Integer.parseInt(this.text.getText());
+                            gameArea.addToSets(row, col, number);
+                            setCalculatedNumber(0);
+                        }
+                    });
+                }
+            } else {
+                gameArea.turnOffRowsColsSquare();
+                this.border.requestFocus();
+            }
+        });
+    }
+
+    public void setTileActionOff() {
+        this.border.setOnMouseEntered(enter -> {
+        });
+
+        this.border.setOnMouseExited((event) -> {
+        });
+
+        this.border.setOnMouseClicked(event -> {
+        });
+    }
+
+    public void lightMainTile() {
+        this.border.setFill(Color.LIGHTSLATEGRAY);
+    }
+
+    public void lightTile() {
+        this.border.setFill(Color.GRAY);
+    }
+
+    public void turnOffTile() {
+        this.border.setFill(Color.TRANSPARENT);
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public void setColumn(int col) {
+        this.col = col;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return col;
     }
 
 }

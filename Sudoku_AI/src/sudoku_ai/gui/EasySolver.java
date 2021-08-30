@@ -23,11 +23,11 @@ public class EasySolver extends Thread {
 
     @Override
     public void run() {
-        solveSudoku(true);
+        solveSudoku();
         stop();
     }
 
-    public synchronized void solveSudoku(boolean isAnimation) {
+    public synchronized void solveSudoku(/*boolean isAnimation*/) {
         /*Algorithm: 
         We loop through columns and rows and look for empty tiles. 
         In empty tiles we calculate intersection of set of rows, set of columns and set of squares.
@@ -43,14 +43,13 @@ public class EasySolver extends Thread {
             for (int row = 0; row < 9; row++) {
                 for (int col = 0; col < 9; col++) {
                     if (tilesArray[row][col].getNumber() == 0) {
-                        if (isAnimation) {
-                            tilesArray[row][col].setGreenBorderColor();
-                            try {
-                                wait(100);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(EasySolver.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                        tilesArray[row][col].setGreenBorderColor();
+                        try {
+                            wait(100);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(EasySolver.class.getName()).log(Level.SEVERE, null, ex);
                         }
+
                         //additional set to avoid unintended destruction
                         Set<Integer> resultSet = new HashSet<>(basicSet);
                         //check col
@@ -66,8 +65,6 @@ public class EasySolver extends Thread {
 
                         if (resultSet.size() == 1) {
                             //display the only possible number after intersections
-                            //Integer[] resultArray = new Integer[1];
-                            //resultSet.toArray(resultArray);
                             int resultNumber = resultArray[0];
                             tilesArray[row][col].setCalculatedNumber(resultNumber);
                             //delete chosen number from sets
@@ -84,9 +81,9 @@ public class EasySolver extends Thread {
                                 squareSetList.get(squareIndex).remove(resultNumber);
                             }
                         }
-                        if (isAnimation) {
-                            tilesArray[row][col].setWhiteBorderColor();
-                        }
+
+                        tilesArray[row][col].setWhiteBorderColor();
+
                     }
                 }
             }
@@ -166,7 +163,6 @@ public class EasySolver extends Thread {
                 return false;
             }
         }
-        //idk if here is fine
         columnSetList.clear();
         rowSetList.clear();
         squareSetList.clear();
