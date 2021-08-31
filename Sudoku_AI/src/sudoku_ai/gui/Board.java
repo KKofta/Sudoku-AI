@@ -23,6 +23,7 @@ public class Board extends Pane {
     public Board() {
         createWiderLines();
         createGrid();
+        initializeLists();
     }
 
     private void createWiderLines() {
@@ -166,6 +167,17 @@ public class Board extends Pane {
                 removeFromSets(row, col, number);
             }
         }
+    }
+    
+    public void generateBoard(){
+        //BoardGenerator boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
+    }
+    
+    public void animateGenerator(){
+        clearBoard();
+        initializeLists();
+        BoardGenerator boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
+        boardGenerator.start();
     }
 
     public void animateEasySudoku() {

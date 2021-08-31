@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -177,10 +176,17 @@ public class GUI extends Application {
         HBox generatorsHBox = new HBox(10);
         generatorsHBox.setAlignment(Pos.CENTER);
         Button generateButton = new Button("Generate");
-        //action
         Button generateVisButton = new Button("Visualize");
-        //action
         generatorsHBox.getChildren().addAll(generateButton, generateVisButton);
+        
+        generateButton.setOnAction(e -> {
+            
+        });
+        
+        generateVisButton.setOnAction(e -> {
+            gameArea.animateGenerator();
+            generateVisButton.setDisable(true);
+        });
 
         Label myBoardLabel = new Label("Create Your Own Board");
         HBox myBoardHBox = new HBox(10);
@@ -210,6 +216,7 @@ public class GUI extends Application {
             gameArea.clearBoard();
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
             finishSolvingButton.setDisable(true);
+            saveBoardButton.setDisable(true);
         });
 
         //exit area
