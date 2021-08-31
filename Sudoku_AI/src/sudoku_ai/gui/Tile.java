@@ -59,6 +59,13 @@ public class Tile extends StackPane {
         text.setStroke(Color.GOLD);
     }
 
+    public void changeYellowToWhite() {
+        if (!this.text.getText().isEmpty() || this.text.getFill().equals(Color.GOLD)) {
+            text.setFill(Color.WHITESMOKE);
+            text.setStroke(Color.WHITESMOKE);
+        }
+    }
+
     public int getNumber() {
         String numberString = this.text.getText();
         if (numberString.equals("")) {
@@ -96,7 +103,7 @@ public class Tile extends StackPane {
                 gameArea.lightRowsColsSquare(this);
 
                 this.text.requestFocus();
-                if ( this.text.getText().isEmpty() || this.text.getFill().equals(Color.GOLD)) {
+                if (this.text.getText().isEmpty() || this.text.getFill().equals(Color.GOLD)) {
                     this.text.setOnKeyPressed((e) -> {
                         if (e.getCode().equals(KeyCode.DIGIT1)) {
                             setCalculatedNumber(1);
@@ -125,8 +132,8 @@ public class Tile extends StackPane {
                         } else if (e.getCode().equals(KeyCode.DIGIT9)) {
                             setCalculatedNumber(9);
                             gameArea.removeFromSets(row, col, 9);
-                        } else if (e.getCode().equals(KeyCode.DIGIT0) || 
-                                e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
+                        } else if (e.getCode().equals(KeyCode.DIGIT0)
+                                || e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
                             int number = Integer.parseInt(this.text.getText());
                             gameArea.addToSets(row, col, number);
                             setCalculatedNumber(0);

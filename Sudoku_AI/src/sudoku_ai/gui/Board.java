@@ -338,5 +338,13 @@ public class Board extends Pane {
         }
         return true;
     }
+    
+    public void saveBoard(){
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                tilesArray[i][j].changeYellowToWhite();
+            }
+        }
+    }
 
 }

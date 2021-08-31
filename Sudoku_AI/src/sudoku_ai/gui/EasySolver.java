@@ -27,7 +27,7 @@ public class EasySolver extends Thread {
         stop();
     }
 
-    public synchronized void solveSudoku(/*boolean isAnimation*/) {
+    public synchronized void solveSudoku() {
         /*Algorithm: 
         We loop through columns and rows and look for empty tiles. 
         In empty tiles we calculate intersection of set of rows, set of columns and set of squares.

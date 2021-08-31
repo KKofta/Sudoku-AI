@@ -24,12 +24,8 @@ public class BacktrackingSolver extends Thread {
 
     @Override
     public void run() {
-        solveSudokuWithBacktracking();
-        stop();
-    }
-
-    public void solveSudokuWithBacktracking() {
         backtrackingAlgorithm(0, 0);
+        stop();
     }
 
     private synchronized boolean backtrackingAlgorithm(int row, int col) {
@@ -86,7 +82,6 @@ public class BacktrackingSolver extends Thread {
     }
 
     private boolean isPossible(int row, int col, int squareIndex, int number) {
-
         //additional set to avoid unintended destruction
         Set<Integer> resultSet = new HashSet<>(basicSet);
         //check col

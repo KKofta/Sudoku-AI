@@ -114,6 +114,7 @@ public class GUI extends Application {
         });
 
         finishSolvingButton.setOnAction(e -> {
+            gameArea.turnOffRowsColsSquare();
             if (gameArea.isBoardValid()) {
                 displayMessage("Great! You solved this sudoku!");
             } else {
@@ -132,9 +133,6 @@ public class GUI extends Application {
             stopSimulationButton.setDisable(false);
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
         });
-
-        disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
-        finishSolvingButton.setDisable(true);
 
         //Sample boards area
         Label samplesLabel = new Label("Load Sample Boards");
@@ -190,6 +188,20 @@ public class GUI extends Application {
         Button createBoardButton = new Button("Create Board");
         Button saveBoardButton = new Button("Save Board");
         myBoardHBox.getChildren().addAll(createBoardButton, saveBoardButton);
+        
+        createBoardButton.setOnAction(e -> {
+            disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
+            saveBoardButton.setDisable(false);
+            gameArea.tilesActionOn();
+        });
+        
+        saveBoardButton.setOnAction(e -> {
+            saveBoardButton.setDisable(true);
+            gameArea.tilesActionOff();
+            gameArea.turnOffRowsColsSquare();
+            gameArea.saveBoard();
+            disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, false);
+        });
 
         //clear board area
         Button clearButton = new Button("Clear Board");
@@ -208,6 +220,10 @@ public class GUI extends Application {
         bottomMenu.setAlignment(Pos.CENTER);
         bottomMenu.getChildren().addAll(clearButton, exitButton);
         root.setBottom(bottomMenu);
+        
+        disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
+        finishSolvingButton.setDisable(true);
+        saveBoardButton.setDisable(true);
 
         leftMenu.getChildren().addAll(samplesLabel, samplesHBox, samplesHBox2,
                 myBoardLabel, myBoardHBox, generatorsLabel, generatorsHBox);
