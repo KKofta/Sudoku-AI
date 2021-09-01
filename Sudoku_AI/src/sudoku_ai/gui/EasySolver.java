@@ -13,6 +13,7 @@ public class EasySolver extends Thread {
     private static List<Set> columnSetList = new ArrayList<>(9);
     private static List<Set> rowSetList = new ArrayList<>(9);
     private static List<Set> squareSetList = new ArrayList<>(9);
+    Set<Integer> basicSet = createBasicSet();
 
     public EasySolver(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
         this.tilesArray = tilesArray;
@@ -27,7 +28,7 @@ public class EasySolver extends Thread {
         stop();
     }
 
-    public synchronized void solveSudoku() {
+    private synchronized void solveSudoku() {
         /*Algorithm: 
         We loop through columns and rows and look for empty tiles. 
         In empty tiles we calculate intersection of set of rows, set of columns and set of squares.
@@ -159,7 +160,7 @@ public class EasySolver extends Thread {
     private static boolean isAlgorithmFinished() {
 
         for (int i = 0; i < 9; i++) {
-            if (columnSetList.get(i).isEmpty() == false || rowSetList.get(i).isEmpty() == false || squareSetList.get(i).isEmpty() == false) {
+            if (!columnSetList.get(i).isEmpty() || !rowSetList.get(i).isEmpty() || !squareSetList.get(i).isEmpty()) {
                 return false;
             }
         }
@@ -167,6 +168,14 @@ public class EasySolver extends Thread {
         rowSetList.clear();
         squareSetList.clear();
         return true;
+    }
+    
+    private Set<Integer> createBasicSet() {
+        basicSet = new HashSet<>();
+        for (int i = 1; i <= 9; i++) {
+            basicSet.add(i);
+        }
+        return basicSet;
     }
 
 }

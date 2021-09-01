@@ -18,6 +18,7 @@ public class Board extends Pane {
     private final double tileSize = boardSize / 9;
     private EasySolver easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList);
     private BacktrackingSolver backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList);
+    private BoardGenerator boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
     private boolean assistance = false;
 
     public Board() {
@@ -62,6 +63,7 @@ public class Board extends Pane {
     }
 
     public void clearBoard() {
+        initializeLists();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 tilesArray[i][j].setNumber(0);
@@ -69,6 +71,7 @@ public class Board extends Pane {
                 tilesArray[i][j].turnOffTile();
             }
         }
+        boardGenerator.stop();
         easySolver.stop();
         backtrackingSolver.stop();
     }
@@ -175,9 +178,12 @@ public class Board extends Pane {
     
     public void animateGenerator(){
         clearBoard();
-        initializeLists();
-        BoardGenerator boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
+        boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
         boardGenerator.start();
+    }
+    
+    public void stopAnimationGenerator(){
+        boardGenerator.stop();
     }
 
     public void animateEasySudoku() {
@@ -190,12 +196,12 @@ public class Board extends Pane {
         backtrackingSolver.start();
     }
 
-    public void stopAnimation() {
+    public void stopAnimationSolver() {
         easySolver.stop();
         backtrackingSolver.stop();
     }
 
-    private static void initializeLists() {
+    private void initializeLists() {
         columnSetList.clear();
         rowSetList.clear();
         squareSetList.clear();
@@ -357,6 +363,14 @@ public class Board extends Pane {
                 tilesArray[i][j].changeYellowToWhite();
             }
         }
+    }
+    
+    public void saveGeneratedBoard(){
+        saveBoard();
+        rowSetList = boardGenerator.getRowSets();
+        columnSetList = boardGenerator.getColSets();
+        squareSetList = boardGenerator.getSquareSets();
+        System.out.println("Row:"+ rowSetList.get(0));
     }
 
 }
