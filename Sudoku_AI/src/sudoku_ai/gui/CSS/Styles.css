@@ -44,3 +44,43 @@
 .dialog-pane:header .header-panel {
     -fx-background-color: #383838;
 }
+
+#easy-button, #easygen-button {
+    -fx-background-color: #A1B56C;
+}
+
+#easy-button:hover,
+#easygen-button:hover {
+    -fx-background-color: whitesmoke;
+    -fx-text-fill: #A1B56C;
+}
+
+#intermediate-button, #intermediategen-button {
+    -fx-background-color: #DC9656;
+}
+
+#intermediate-button:hover,
+#intermediategen-button:hover {
+    -fx-background-color: whitesmoke;
+    -fx-text-fill: #DC9656;
+}
+
+#hard-button, #stop-button, #stopgen-button {
+    -fx-background-color: #AB4642;
+}
+
+#hard-button:hover, 
+#stop-button:hover, 
+#stopgen-button:hover {
+    -fx-background-color: whitesmoke;
+    -fx-text-fill: #AB4642;
+}
+
+#notfun-button {
+    -fx-background-color: #181818;
+}
+
+#notfun-button:hover {
+    -fx-background-color: whitesmoke;
+    -fx-text-fill: #181818;
+}

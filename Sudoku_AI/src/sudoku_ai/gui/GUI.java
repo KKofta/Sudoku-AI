@@ -75,6 +75,7 @@ public class GUI extends Application {
 
         //stop simulation area
         Button stopSimulationButton = new Button("Stop Simulation");
+        stopSimulationButton.setId("stop-button");
         stopSimulationButton.setDisable(true);
         stopSimulationButton.setOnAction(e -> {
             gameArea.stopAnimationSolver();
@@ -139,14 +140,18 @@ public class GUI extends Application {
         Label samplesLabel = new Label("Load Sample Boards");
         HBox samplesHBox = new HBox(10);
         samplesHBox.setAlignment(Pos.CENTER);
+        
         Button easyButton = new Button("Easy Board");
+        easyButton.setId("easy-button");
         easyButton.setOnAction(e -> {
             gameArea.tilesActionOff();
             gameArea.loadEasyBoard();
             finishSolvingButton.setDisable(true);
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, false);
         });
+        
         Button intermediateButton = new Button("Intermediate Board");
+        intermediateButton.setId("intermediate-button");
         intermediateButton.setOnAction(e -> {
             gameArea.tilesActionOff();
             gameArea.loadIntermediateBoard();
@@ -158,13 +163,17 @@ public class GUI extends Application {
         HBox samplesHBox2 = new HBox(10);
         samplesHBox2.setAlignment(Pos.CENTER);
         Button hardButton = new Button("Hard Board");
+        hardButton.setId("hard-button");
+        
         hardButton.setOnAction(e -> {
             gameArea.tilesActionOff();
             gameArea.loadHardBoard();
             finishSolvingButton.setDisable(true);
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, false);
         });
+        
         Button notFunButton = new Button("Not Fun Board");
+        notFunButton.setId("notfun-button");
         notFunButton.setOnAction(e -> {
             gameArea.tilesActionOff();
             gameArea.loadNotFunBoard();
@@ -175,19 +184,22 @@ public class GUI extends Application {
 
         //Generate boards area
         Label generatorsLabel = new Label("Generate Boards");
-        HBox generatorsHBox = new HBox(10);
-        generatorsHBox.setAlignment(Pos.CENTER);
-        Button generateButton = new Button("Generate");
-        Button generateVisButton = new Button("Visualize");
+        Button generateEasyButton = new Button("Visualize Easy Generation");
+        generateEasyButton.setId("easygen-button");
+        Button generateIntermediateButton = new Button("Visualize Intermediate Generation");
+        generateIntermediateButton.setId("intermediategen-button");
         Button stopSimGenButton = new Button("Stop Simulation");
+        stopSimGenButton.setId("stopgen-button");
         Button saveGenBoardButton = new Button("Save Board");
-        generatorsHBox.getChildren().addAll(generateButton, generateVisButton);
         
-        generateButton.setOnAction(e -> {
-            
+        generateEasyButton.setOnAction(e -> {
+            gameArea.animateGenerator();
+            stopSimGenButton.setDisable(false);
+            saveGenBoardButton.setDisable(false);
+            disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
         });
         
-        generateVisButton.setOnAction(e -> {
+        generateIntermediateButton.setOnAction(e -> {
             gameArea.animateGenerator();
             stopSimGenButton.setDisable(false);
             saveGenBoardButton.setDisable(false);
@@ -197,7 +209,7 @@ public class GUI extends Application {
         stopSimGenButton.setOnAction(e -> {
             gameArea.stopAnimationGenerator();
             stopSimGenButton.setDisable(true);
-            generateVisButton.setDisable(false);
+            generateEasyButton.setDisable(false);
         });
         
         saveGenBoardButton.setOnAction(e -> {
@@ -253,7 +265,7 @@ public class GUI extends Application {
         saveGenBoardButton.setDisable(true);
 
         leftMenu.getChildren().addAll(samplesLabel, samplesHBox, samplesHBox2,
-                myBoardLabel, myBoardHBox, generatorsLabel, generatorsHBox, stopSimGenButton, saveGenBoardButton);
+                myBoardLabel, myBoardHBox, generatorsLabel, generateEasyButton, generateIntermediateButton, stopSimGenButton, saveGenBoardButton);
         root.setLeft(leftMenu);
 
         rightMenu.getChildren().addAll(solveItYourselfLabel, solveItYourselfHBox,
