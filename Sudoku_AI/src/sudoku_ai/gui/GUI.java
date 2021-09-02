@@ -103,6 +103,8 @@ public class GUI extends Application {
             gameArea.tilesActionOn();
         });
 
+        assistanceBox.setSelected(true);
+        gameArea.setAssistance(true);
         assistanceBox.setOnAction(e -> {
             if (assistanceBox.isSelected()) {
                 gameArea.setAssistance(true);
@@ -186,10 +188,10 @@ public class GUI extends Application {
         });
         
         generateVisButton.setOnAction(e -> {
-            //generateVisButton.setDisable(true);
             gameArea.animateGenerator();
             stopSimGenButton.setDisable(false);
-            //generateVisButton.setDisable(true);
+            saveGenBoardButton.setDisable(false);
+            disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
         });
         
         stopSimGenButton.setOnAction(e -> {
@@ -200,6 +202,7 @@ public class GUI extends Application {
         
         saveGenBoardButton.setOnAction(e -> {
             gameArea.saveGeneratedBoard();
+            saveGenBoardButton.setDisable(true);
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, false);
         });
 
@@ -246,6 +249,8 @@ public class GUI extends Application {
         disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
         finishSolvingButton.setDisable(true);
         saveBoardButton.setDisable(true);
+        stopSimGenButton.setDisable(true);
+        saveGenBoardButton.setDisable(true);
 
         leftMenu.getChildren().addAll(samplesLabel, samplesHBox, samplesHBox2,
                 myBoardLabel, myBoardHBox, generatorsLabel, generatorsHBox, stopSimGenButton, saveGenBoardButton);

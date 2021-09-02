@@ -370,7 +370,6 @@ public class Board extends Pane {
         rowSetList = boardGenerator.getRowSets();
         columnSetList = boardGenerator.getColSets();
         squareSetList = boardGenerator.getSquareSets();
-        System.out.println("Row:"+ rowSetList.get(0));
     }
 
 }

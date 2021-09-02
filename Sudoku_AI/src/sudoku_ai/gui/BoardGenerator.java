@@ -35,7 +35,7 @@ public class BoardGenerator extends Thread {
     private void generateBoard() {
         fillDiagonalSquares();
         fillRemainingTiles();
-        removeNumbers(40);
+        removeNumbers(60);
     }
 
     private synchronized void fillDiagonalSquares() {
@@ -63,9 +63,6 @@ public class BoardGenerator extends Thread {
                     }
 
                     removeFromSets(i, j, loop * 4, resultNumber);
-                    /*rowSetList.get(i).remove(resultNumber);
-                    columnSetList.get(j).remove(resultNumber);
-                    squareSetList.get(loop * 4).remove(resultNumber);*/
                 }
             }
             loop++;
@@ -78,7 +75,7 @@ public class BoardGenerator extends Thread {
 
     private synchronized boolean backtrackingAlgorithm(int row, int col) {
 
-        if (isFinished(row, col)) {
+        if (isBacktrackingFinished(row, col)) {
             return true;
         }
 
@@ -100,15 +97,12 @@ public class BoardGenerator extends Thread {
                 if (isPossible(row, col, squareIndex, n)) {
                     tilesArray[row][col].setCalculatedNumber(n);
                     try {
-                        wait(40);
+                        wait(50);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(BacktrackingSolver.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     removeFromSets(row, col, squareIndex, n);
-                    /*columnSetList.get(col).remove(n);
-                    rowSetList.get(row).remove(n);
-                    squareSetList.get(squareIndex).remove(n);*/
 
                     if (backtrackingAlgorithm(row, col + 1)) {
                         return true;
@@ -116,9 +110,6 @@ public class BoardGenerator extends Thread {
                         tilesArray[row][col].setCalculatedNumber(0);
 
                         addToSets(row, col, squareIndex, n);
-                        /*columnSetList.get(col).add(n);
-                        rowSetList.get(row).add(n);
-                        squareSetList.get(squareIndex).add(n);*/
                     }
                 }
 
@@ -127,7 +118,7 @@ public class BoardGenerator extends Thread {
         return false;
     }
 
-    private boolean isFinished(int row, int col) {
+    private boolean isBacktrackingFinished(int row, int col) {
         return row == 8 && col == 9;
     }
 
@@ -178,12 +169,9 @@ public class BoardGenerator extends Thread {
     }
 
     private synchronized void removeNumbers(int amount) {
-        for (int i = 0; i < 9; i++) {
-            columnSetListCopy.add(new HashSet<>(columnSetList));
-            rowSetListCopy.add(new HashSet<>(rowSetList));
-            squareSetListCopy.add(new HashSet<>(squareSetList));
-        }
-        while (amount > 0) {
+        int countNotFound = 0;
+        initialzieCopySets();
+        while (amount > 0 && countNotFound <= 40) {
             Random randRow = new Random();
             int randRowIndex = randRow.nextInt(9);
             Random randCol = new Random();
@@ -194,50 +182,34 @@ public class BoardGenerator extends Thread {
                 int squareIndex = calculateSquareIndex(randRowIndex, randColIndex);
 
                 addToSets(randRowIndex, randColIndex, squareIndex, selectedNumber);
-                
-                
-                for(int i = 0; i < 9; i++){
-                    columnSetListCopy.get(i).clear();
-                    rowSetListCopy.get(i).clear();
-                    squareSetListCopy.get(i).clear();
-                    columnSetListCopy.get(i).addAll(columnSetList.get(i));
-                    rowSetListCopy.get(i).addAll(rowSetList.get(i));
-                    squareSetListCopy.get(i).addAll(squareSetList.get(i));
-                }
-                
+                //in isSolvable we operate on main sets so we have to remember them from before checking 
+                copySets();
 
-                //System.out.println("Col:" + columnSetList);
-                //System.out.println("Copy:" + columnSetListCopy);
-
-                tilesArray[randRowIndex][randColIndex].setCalculatedNumber(0);
                 amount--;
+                tilesArray[randRowIndex][randColIndex].setCalculatedNumber(0);
                 try {
-                    wait(60);
+                    wait(40);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(BacktrackingSolver.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if (isSolvable()) {
-                    System.out.println("Solvable");
-                } else {
-                    System.out.println("Nie solvable");
+                if (!isSolvable()) {
+                    //we copy back remembered sets after isSolvable and remove added number
+                    copySetsBack();
                     removeFromSets(randRowIndex, randColIndex, squareIndex, selectedNumber);
-                    tilesArray[randRowIndex][randColIndex].setCalculatedNumber(selectedNumber);
                     amount++;
+                    countNotFound++;
+                    tilesArray[randRowIndex][randColIndex].setCalculatedNumber(selectedNumber);
+                    try {
+                        wait(40);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(BacktrackingSolver.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    //we copy back remembered sets after isSolvable
+                    copySetsBack();
+                    countNotFound = 0;
                 }
-                //System.out.println("Col:" + columnSetList);
-                //System.out.println("Copy:" + columnSetListCopy);
-
-                for(int i = 0; i < 9; i++){
-                    columnSetList.get(i).clear();
-                    rowSetList.get(i).clear();
-                    squareSetList.get(i).clear();
-                    columnSetList.get(i).addAll(columnSetListCopy.get(i));
-                    rowSetList.get(i).addAll(rowSetListCopy.get(i));
-                    squareSetList.get(i).addAll(squareSetListCopy.get(i));
-                }
-                //System.out.println("Col:" + columnSetList);
-                //System.out.println("Copy:" + columnSetListCopy);
             }
         }
     }
@@ -250,13 +222,11 @@ public class BoardGenerator extends Thread {
         If the resulting set contains only one number it means that it's the only possible number to enter.
          */
         int countNumPut;
-        while (isAlgorithmFinished() == false) {
+        while (isEasyAlgFinished() == false) {
             countNumPut = 0;
             for (int row = 0; row < 9; row++) {
                 for (int col = 0; col < 9; col++) {
-                    if (/*tilesArray[row][col].getNumber() == 0*/localBoard[row][col] == 0) {
-                        //tilesArray[row][col].setGreenBorderColor();
-
+                    if (localBoard[row][col] == 0) {
                         //additional set to avoid unintended destruction
                         Set<Integer> resultSet = new HashSet<>(basicSet);
                         //check col
@@ -274,28 +244,18 @@ public class BoardGenerator extends Thread {
                             //display the only possible number after intersections
                             int resultNumber = resultArray[0];
                             localBoard[row][col] = resultNumber;
-                            //tilesArray[row][col].setCalculatedNumber(resultNumber);
                             //delete chosen number from sets
                             removeFromSets(row, col, squareIndex, resultNumber);
                             countNumPut++;
-                            /*columnSetList.get(col).remove(resultNumber);
-                            rowSetList.get(row).remove(resultNumber);
-                            squareSetList.get(squareIndex).remove(resultNumber);*/
                         } else {
                             int resultNumber = method2(row, col, resultArray);
                             if (resultNumber != 0) {
-                                //tilesArray[row][col].setCalculatedNumber(resultNumber);
                                 localBoard[row][col] = resultNumber;
                                 //delete chosen number from sets
                                 removeFromSets(row, col, squareIndex, resultNumber);
                                 countNumPut++;
-                                /*columnSetList.get(col).remove(resultNumber);
-                                rowSetList.get(row).remove(resultNumber);
-                                squareSetList.get(squareIndex).remove(resultNumber);*/
                             }
                         }
-
-                        //tilesArray[row][col].setWhiteBorderColor();
                     }
                 }
             }
@@ -357,16 +317,13 @@ public class BoardGenerator extends Thread {
         return localBoard;
     }
 
-    private boolean isAlgorithmFinished() {
+    private boolean isEasyAlgFinished() {
 
         for (int i = 0; i < 9; i++) {
             if (!columnSetList.get(i).isEmpty() || !rowSetList.get(i).isEmpty() || !squareSetList.get(i).isEmpty()) {
                 return false;
             }
         }
-        //columnSetList.clear();
-        //rowSetList.clear();
-        //squareSetList.clear();
         return true;
     }
 
@@ -392,6 +349,36 @@ public class BoardGenerator extends Thread {
 
     public List<Set> getSquareSets() {
         return squareSetList;
+    }
+
+    private void initialzieCopySets() {
+        for (int i = 0; i < 9; i++) {
+            columnSetListCopy.add(new HashSet<>(columnSetList));
+            rowSetListCopy.add(new HashSet<>(rowSetList));
+            squareSetListCopy.add(new HashSet<>(squareSetList));
+        }
+    }
+
+    private void copySets() {
+        for (int i = 0; i < 9; i++) {
+            columnSetListCopy.get(i).clear();
+            rowSetListCopy.get(i).clear();
+            squareSetListCopy.get(i).clear();
+            columnSetListCopy.get(i).addAll(columnSetList.get(i));
+            rowSetListCopy.get(i).addAll(rowSetList.get(i));
+            squareSetListCopy.get(i).addAll(squareSetList.get(i));
+        }
+    }
+
+    private void copySetsBack() {
+        for (int i = 0; i < 9; i++) {
+            columnSetList.get(i).clear();
+            rowSetList.get(i).clear();
+            squareSetList.get(i).clear();
+            columnSetList.get(i).addAll(columnSetListCopy.get(i));
+            rowSetList.get(i).addAll(rowSetListCopy.get(i));
+            squareSetList.get(i).addAll(squareSetListCopy.get(i));
+        }
     }
 
 }
