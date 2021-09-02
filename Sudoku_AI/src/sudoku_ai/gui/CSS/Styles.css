@@ -65,13 +65,12 @@
     -fx-text-fill: #DC9656;
 }
 
-#hard-button, #stop-button, #stopgen-button {
+#hard-button, #hardgen-button {
     -fx-background-color: #AB4642;
 }
 
 #hard-button:hover, 
-#stop-button:hover, 
-#stopgen-button:hover {
+#hardgen-button:hover {
     -fx-background-color: whitesmoke;
     -fx-text-fill: #AB4642;
 }

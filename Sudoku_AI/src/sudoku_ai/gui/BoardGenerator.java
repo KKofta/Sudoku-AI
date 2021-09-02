@@ -18,12 +18,14 @@ public class BoardGenerator extends Thread {
     List<Set> rowSetListCopy = new ArrayList<>(9);
     List<Set> squareSetListCopy = new ArrayList<>(9);
     Set<Integer> basicSet = createBasicSet();
+    private int amountToRemove;
 
-    public BoardGenerator(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
+    public BoardGenerator(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList, int amountToRemove) {
         this.tilesArray = tilesArray;
         this.columnSetList = columnSetList;
         this.rowSetList = rowSetList;
         this.squareSetList = squareSetList;
+        this.amountToRemove = amountToRemove;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class BoardGenerator extends Thread {
     private void generateBoard() {
         fillDiagonalSquares();
         fillRemainingTiles();
-        removeNumbers(60);
+        removeNumbers(amountToRemove);
     }
 
     private synchronized void fillDiagonalSquares() {
@@ -168,10 +170,10 @@ public class BoardGenerator extends Thread {
         return basicSet;
     }
 
-    private synchronized void removeNumbers(int amount) {
+    private synchronized void removeNumbers(int amountToRemove) {
         int countNotFound = 0;
         initialzieCopySets();
-        while (amount > 0 && countNotFound <= 40) {
+        while (amountToRemove > 0 && countNotFound <= 40) {
             Random randRow = new Random();
             int randRowIndex = randRow.nextInt(9);
             Random randCol = new Random();
@@ -185,7 +187,7 @@ public class BoardGenerator extends Thread {
                 //in isSolvable we operate on main sets so we have to remember them from before checking 
                 copySets();
 
-                amount--;
+                amountToRemove--;
                 tilesArray[randRowIndex][randColIndex].setCalculatedNumber(0);
                 try {
                     wait(40);
@@ -197,7 +199,7 @@ public class BoardGenerator extends Thread {
                     //we copy back remembered sets after isSolvable and remove added number
                     copySetsBack();
                     removeFromSets(randRowIndex, randColIndex, squareIndex, selectedNumber);
-                    amount++;
+                    amountToRemove++;
                     countNotFound++;
                     tilesArray[randRowIndex][randColIndex].setCalculatedNumber(selectedNumber);
                     try {

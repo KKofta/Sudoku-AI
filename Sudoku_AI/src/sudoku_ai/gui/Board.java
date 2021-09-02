@@ -18,7 +18,7 @@ public class Board extends Pane {
     private final double tileSize = boardSize / 9;
     private EasySolver easySolver = new EasySolver(tilesArray, columnSetList, rowSetList, squareSetList);
     private BacktrackingSolver backtrackingSolver = new BacktrackingSolver(tilesArray, columnSetList, rowSetList, squareSetList);
-    private BoardGenerator boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
+    private BoardGenerator boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList, 45);
     private boolean assistance = false;
 
     public Board() {
@@ -172,13 +172,9 @@ public class Board extends Pane {
         }
     }
     
-    public void generateBoard(){
-        //BoardGenerator boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
-    }
-    
-    public void animateGenerator(){
+    public void animateGenerator(int amountToRemove){
         clearBoard();
-        boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList);
+        boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList, amountToRemove);
         boardGenerator.start();
     }
     
