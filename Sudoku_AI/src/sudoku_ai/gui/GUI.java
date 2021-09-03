@@ -77,10 +77,6 @@ public class GUI extends Application {
         Button stopSimulationButton = new Button("Stop Simulation");
         stopSimulationButton.setId("stop-button");
         stopSimulationButton.setDisable(true);
-        stopSimulationButton.setOnAction(e -> {
-            gameArea.stopAnimationSolver();
-            stopSimulationButton.setDisable(true);
-        });
 
         //Solve it yourself area
         Label solveItYourselfLabel = new Label("Solve It Yourself");
@@ -98,6 +94,12 @@ public class GUI extends Application {
         Button solveVisButton2 = new Button("Viusalize Backtracking Algorithm");
 
         //action of solve buttons
+        stopSimulationButton.setOnAction(e -> {
+            gameArea.stopAnimationSolver();
+            stopSimulationButton.setDisable(true);
+            solveItYourselfButton.setDisable(false);
+        });
+        
         solveItYourselfButton.setOnAction(e -> {
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
             finishSolvingButton.setDisable(false);
