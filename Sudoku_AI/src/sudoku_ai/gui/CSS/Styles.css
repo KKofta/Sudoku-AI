@@ -83,3 +83,9 @@
     -fx-background-color: whitesmoke;
     -fx-text-fill: #181818;
 }
+
+#info1-button, #info2-button, #infogen-button {
+    -fx-background-radius: 100%;
+    -fx-font-size: 12px;
+    -fx-font-weight : bold ;
+}

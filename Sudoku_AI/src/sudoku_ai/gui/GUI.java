@@ -28,7 +28,7 @@ public class GUI extends Application {
     public void start(Stage primaryStage) {
 
         BorderPane root = new BorderPane();
-        root.setPadding(new Insets(15, 15, 15, 15));
+        root.setPadding(new Insets(10, 10, 20, 10));
 
         createTitle(root, primaryStage);
         createMenu(root, primaryStage);
@@ -73,11 +73,6 @@ public class GUI extends Application {
         VBox rightMenu = new VBox(20);
         rightMenu.setAlignment(Pos.CENTER);
 
-        //stop simulation area
-        Button stopSimulationButton = new Button("Stop Simulation");
-        stopSimulationButton.setId("stop-button");
-        stopSimulationButton.setDisable(true);
-
         //Solve it yourself area
         Label solveItYourselfLabel = new Label("Solve It Yourself");
         HBox solveItYourselfHBox = new HBox(10);
@@ -90,16 +85,31 @@ public class GUI extends Application {
 
         //Solvers boards area
         Label solversLabel1 = new Label("Solve Boards");
+        HBox solveVisHBox1 = new HBox(6);
         Button solveVisButton1 = new Button("Viusalize 1st Heuristic Algorithm");
+        Button visInfoButton1 = new Button(" i ");
+        visInfoButton1.setId("info1-button");
+        solveVisHBox1.setAlignment(Pos.CENTER);
+        solveVisHBox1.getChildren().addAll(solveVisButton1, visInfoButton1);
+        HBox solveVisHBox2 = new HBox(6);
         Button solveVisButton2 = new Button("Viusalize Backtracking Algorithm");
-
-        //action of solve buttons
+        Button visInfoButton2 = new Button(" i ");
+        visInfoButton2.setId("info2-button");
+        solveVisHBox2.setAlignment(Pos.CENTER);
+        solveVisHBox2.getChildren().addAll(solveVisButton2, visInfoButton2);
+        
+        //stop simulation area
+        Button stopSimulationButton = new Button("Stop Simulation");
+        stopSimulationButton.setId("stop-button");
+        stopSimulationButton.setDisable(true);
+        
         stopSimulationButton.setOnAction(e -> {
             gameArea.stopAnimationSolver();
             stopSimulationButton.setDisable(true);
             solveItYourselfButton.setDisable(false);
         });
-        
+
+        //action of solve buttons       
         solveItYourselfButton.setOnAction(e -> {
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
             finishSolvingButton.setDisable(false);
@@ -131,11 +141,19 @@ public class GUI extends Application {
             stopSimulationButton.setDisable(false);
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
         });
+        
+        visInfoButton1.setOnAction(e -> {
+            
+        });
 
         solveVisButton2.setOnAction(e -> {
             gameArea.animateBacktrackingSudoku();
             stopSimulationButton.setDisable(false);
             disableSolveButtons2(solveItYourselfButton, solveVisButton1, solveVisButton2, true);
+        });
+        
+        visInfoButton2.setOnAction(e -> {
+            
         });
 
         //Sample boards area
@@ -185,7 +203,12 @@ public class GUI extends Application {
         samplesHBox2.getChildren().addAll(hardButton, notFunButton);
 
         //Generate boards area
+        HBox genHbox = new HBox(10);
         Label generatorsLabel = new Label("Generate Boards");
+        Button infoGenButton = new Button(" i ");
+        infoGenButton.setId("infogen-button");
+        genHbox.setAlignment(Pos.CENTER);
+        genHbox.getChildren().addAll(generatorsLabel, infoGenButton);
         Button generateEasyButton = new Button("Visualize Easy Generation");
         generateEasyButton.setId("easygen-button");
         Button generateIntermediateButton = new Button("Visualize Intermediate Generation");
@@ -195,6 +218,10 @@ public class GUI extends Application {
         Button stopSimGenButton = new Button("Stop Simulation");
         stopSimGenButton.setId("stopgen-button");
         Button saveGenBoardButton = new Button("Save Board");
+        
+        infoGenButton.setOnAction(e -> {
+            
+        });
         
         generateEasyButton.setOnAction(e -> {
             gameArea.animateGenerator(46);
@@ -276,12 +303,12 @@ public class GUI extends Application {
         saveGenBoardButton.setDisable(true);
 
         leftMenu.getChildren().addAll(samplesLabel, samplesHBox, samplesHBox2,
-                myBoardLabel, myBoardHBox, generatorsLabel, generateEasyButton, 
+                myBoardLabel, myBoardHBox, genHbox, generateEasyButton, 
                 generateIntermediateButton, generateHardButton, stopSimGenButton, saveGenBoardButton);
         root.setLeft(leftMenu);
 
         rightMenu.getChildren().addAll(solveItYourselfLabel, solveItYourselfHBox,
-                finishSolvingButton, solversLabel1, solveVisButton1, solveVisButton2, stopSimulationButton);
+                finishSolvingButton, solversLabel1, solveVisHBox1, solveVisHBox2, stopSimulationButton);
         root.setRight(rightMenu);
     }
 
