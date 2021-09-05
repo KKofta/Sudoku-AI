@@ -17,21 +17,21 @@ public class Tile extends StackPane {
     private int col;
 
     public Tile(double tileSize) {
-        this.border.setWidth(tileSize);
-        this.border.setHeight(tileSize);
-        this.border.setFill(Color.TRANSPARENT);
-        this.border.setStroke(Color.WHITESMOKE);
-        this.border.setStrokeWidth(1.5);
+        border.setWidth(tileSize);
+        border.setHeight(tileSize);
+        border.setFill(Color.TRANSPARENT);
+        border.setStroke(Color.WHITESMOKE);
+        border.setStrokeWidth(1.5);
 
-        this.text.setFont(Font.font(30));
-        this.text.setFill(Color.WHITESMOKE);
-        this.text.setStroke(Color.WHITESMOKE);
-        this.text.setTextAlignment(TextAlignment.CENTER);
-        setAlignment(this.border, Pos.CENTER);
-        setAlignment(this.text, Pos.CENTER);
+        text.setFont(Font.font(30));
+        text.setFill(Color.WHITESMOKE);
+        text.setStroke(Color.WHITESMOKE);
+        text.setTextAlignment(TextAlignment.CENTER);
+        setAlignment(border, Pos.CENTER);
+        setAlignment(text, Pos.CENTER);
         setMaxSize(tileSize, tileSize);
 
-        getChildren().addAll(this.border, this.text);
+        getChildren().addAll(border, text);
     }
 
     public void setNumber(int number) {
@@ -41,9 +41,10 @@ public class Tile extends StackPane {
         } else {
             numberString = Integer.toString(number);
         }
-        this.text.setText(numberString);
+        text.setText(numberString);
         text.setFill(Color.WHITESMOKE);
         text.setStroke(Color.WHITESMOKE);
+        //Color.
     }
 
     public void setCalculatedNumber(int number) {
@@ -54,20 +55,20 @@ public class Tile extends StackPane {
         } else {
             numberString = Integer.toString(number);
         }
-        this.text.setText(numberString);
+        text.setText(numberString);
         text.setFill(Color.GOLD);
         text.setStroke(Color.GOLD);
     }
 
     public void changeYellowToWhite() {
-        if (!this.text.getText().isEmpty() || this.text.getFill().equals(Color.GOLD)) {
+        if (!text.getText().isEmpty() || text.getFill().equals(Color.GOLD)) {
             text.setFill(Color.WHITESMOKE);
             text.setStroke(Color.WHITESMOKE);
         }
     }
 
     public int getNumber() {
-        String numberString = this.text.getText();
+        String numberString = text.getText();
         if (numberString.equals("")) {
             return 0;
         }
@@ -75,35 +76,35 @@ public class Tile extends StackPane {
     }
 
     public void setGreenBorderColor() {
-        this.border.setStroke(Color.GREEN);
-        this.border.setStrokeWidth(4);
-        this.border.setStyle("-fx-stroke: green; -fx-stroke-width: 4");
+        border.setStroke(Color.GREEN);
+        border.setStrokeWidth(4);
+        border.setStyle("-fx-stroke: green; -fx-stroke-width: 4");
     }
 
     public void setWhiteBorderColor() {
-        this.border.setStroke(Color.WHITESMOKE);
-        this.border.setStrokeWidth(1.5);
-        this.border.setStyle("-fx-stroke: whitesmoke; -fx-stroke-width: 1.5");
+        border.setStroke(Color.WHITESMOKE);
+        border.setStrokeWidth(1.5);
+        border.setStyle("-fx-stroke: whitesmoke; -fx-stroke-width: 1.5");
     }
 
     public void setTileActionOn() {
-        this.border.setOnMouseEntered(enter -> {
+        border.setOnMouseEntered(enter -> {
             setGreenBorderColor();
         });
 
-        this.border.setOnMouseExited((event) -> {
+        border.setOnMouseExited((event) -> {
             setWhiteBorderColor();
         });
 
-        this.border.setOnMouseClicked(event -> {
+        border.setOnMouseClicked(event -> {
 
             Board gameArea = GUI.getBoard();
 
-            if (!this.text.isFocused()) {
+            if (!text.isFocused()) {
                 gameArea.lightRowsColsSquare(this);
 
-                this.text.requestFocus();
-                if (this.text.getText().isEmpty() || this.text.getFill().equals(Color.GOLD)) {
+                text.requestFocus();
+                if (text.getText().isEmpty() || text.getFill().equals(Color.GOLD)) {
                     this.text.setOnKeyPressed((e) -> {
                         if (e.getCode().equals(KeyCode.DIGIT1)) {
                             setCalculatedNumber(1);
@@ -134,7 +135,7 @@ public class Tile extends StackPane {
                             gameArea.removeFromSets(row, col, 9);
                         } else if (e.getCode().equals(KeyCode.DIGIT0)
                                 || e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
-                            int number = Integer.parseInt(this.text.getText());
+                            int number = Integer.parseInt(text.getText());
                             gameArea.addToSets(row, col, number);
                             setCalculatedNumber(0);
                         }
@@ -148,26 +149,26 @@ public class Tile extends StackPane {
     }
 
     public void setTileActionOff() {
-        this.border.setOnMouseEntered(enter -> {
+        border.setOnMouseEntered(enter -> {
         });
 
-        this.border.setOnMouseExited((event) -> {
+        border.setOnMouseExited((event) -> {
         });
 
-        this.border.setOnMouseClicked(event -> {
+        border.setOnMouseClicked(event -> {
         });
     }
 
     public void lightMainTile() {
-        this.border.setFill(Color.LIGHTSLATEGRAY);
+        border.setFill(Color.LIGHTSLATEGRAY);
     }
 
     public void lightTile() {
-        this.border.setFill(Color.GRAY);
+        border.setFill(Color.GRAY);
     }
 
     public void turnOffTile() {
-        this.border.setFill(Color.TRANSPARENT);
+        border.setFill(Color.TRANSPARENT);
     }
 
     public void setRow(int row) {

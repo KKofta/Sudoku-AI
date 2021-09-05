@@ -19,13 +19,19 @@ public class BoardGenerator extends Thread {
     List<Set> squareSetListCopy = new ArrayList<>(9);
     Set<Integer> basicSet = createBasicSet();
     private int amountToRemove;
+    private int numberOfSolutions = 0;
+    int[][] localBoard = new int[9][9];
+    private List rowsColsChecked = new ArrayList<>();
+    private boolean experimentMode = false;
 
-    public BoardGenerator(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList, int amountToRemove) {
+    public BoardGenerator(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, 
+            List<Set> squareSetList, int amountToRemove, boolean experimentMode) {
         this.tilesArray = tilesArray;
         this.columnSetList = columnSetList;
         this.rowSetList = rowSetList;
         this.squareSetList = squareSetList;
         this.amountToRemove = amountToRemove;
+        this.experimentMode = experimentMode;
     }
 
     @Override
@@ -91,26 +97,22 @@ public class BoardGenerator extends Thread {
                 return true;
             }
         } else {
-
             for (int n = 1; n <= 9; n++) {
-
                 int squareIndex = calculateSquareIndex(row, col);
 
                 if (isPossible(row, col, squareIndex, n)) {
                     tilesArray[row][col].setCalculatedNumber(n);
+                    removeFromSets(row, col, squareIndex, n);
                     try {
                         wait(50);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(BacktrackingSolver.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    removeFromSets(row, col, squareIndex, n);
-
                     if (backtrackingAlgorithm(row, col + 1)) {
                         return true;
                     } else {
                         tilesArray[row][col].setCalculatedNumber(0);
-
                         addToSets(row, col, squareIndex, n);
                     }
                 }
@@ -137,50 +139,17 @@ public class BoardGenerator extends Thread {
         return resultSet.contains(number);
     }
 
-    private int calculateSquareIndex(int row, int col) {
-        int squareIndex = 0;
-        int x = row / 3;
-        switch (col) {
-            case 0:
-            case 1:
-            case 2:
-                squareIndex = 3 * x;
-                break;
-            case 3:
-            case 4:
-            case 5:
-                squareIndex = 3 * x + 1;
-                break;
-            case 6:
-            case 7:
-            case 8:
-                squareIndex = 3 * x + 2;
-                break;
-            default:
-                break;
-        }
-        return squareIndex;
-    }
-
-    private Set<Integer> createBasicSet() {
-        basicSet = new HashSet<>();
-        for (int i = 1; i <= 9; i++) {
-            basicSet.add(i);
-        }
-        return basicSet;
-    }
-
     private synchronized void removeNumbers(int amountToRemove) {
-        int countNotFound = 0;
-        initialzieCopySets();
-        while (amountToRemove > 0 && countNotFound <= 40) {
+        initializeCopySets();//needed to calculate solvability outside of gui
+        while (amountToRemove > 0 && rowsColsChecked.size() < 81) {
             Random randRow = new Random();
             int randRowIndex = randRow.nextInt(9);
             Random randCol = new Random();
             int randColIndex = randCol.nextInt(9);
 
             int selectedNumber = tilesArray[randRowIndex][randColIndex].getNumber();
-            if (selectedNumber != 0) {
+
+            if (selectedNumber != 0 && wasNotChecked(randRowIndex, randColIndex)) {
                 int squareIndex = calculateSquareIndex(randRowIndex, randColIndex);
 
                 addToSets(randRowIndex, randColIndex, squareIndex, selectedNumber);
@@ -200,7 +169,6 @@ public class BoardGenerator extends Thread {
                     copySetsBack();
                     removeFromSets(randRowIndex, randColIndex, squareIndex, selectedNumber);
                     amountToRemove++;
-                    countNotFound++;
                     tilesArray[randRowIndex][randColIndex].setCalculatedNumber(selectedNumber);
                     try {
                         wait(40);
@@ -210,19 +178,25 @@ public class BoardGenerator extends Thread {
                 } else {
                     //we copy back remembered sets after isSolvable
                     copySetsBack();
-                    countNotFound = 0;
                 }
             }
         }
     }
+    
+    private boolean isSolvable(){
+        if( experimentMode ){
+            return isSolvableByBacktracking();
+        } else {
+            return isSolvableByBasicAlgorithm();
+        }
+    }
 
-    public boolean isSolvable() {
-        int[][] localBoard = representBoard();
-        /*Algorithm: 
-        We loop through columns and rows and look for empty tiles. 
+    private boolean isSolvableByBasicAlgorithm() {
+        /*We loop through columns and rows and look for empty tiles. 
         In empty tiles we calculate intersection of set of rows, set of columns and set of squares.
         If the resulting set contains only one number it means that it's the only possible number to enter.
-         */
+        If it is the only possible to enter it means sudoku board is still valid */
+        representBoard();//copy of a gui board to calculate in the backend
         int countNumPut;
         while (isEasyAlgFinished() == false) {
             countNumPut = 0;
@@ -269,7 +243,6 @@ public class BoardGenerator extends Thread {
     }
 
     private int method2(int row, int col, Integer[] array) {
-
         for (int i = 0; i < array.length; i++) {
             int count = 0;
             //check rows
@@ -309,16 +282,6 @@ public class BoardGenerator extends Thread {
         return 0;
     }
 
-    private int[][] representBoard() {
-        int[][] localBoard = new int[9][9];
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                localBoard[i][j] = tilesArray[i][j].getNumber();
-            }
-        }
-        return localBoard;
-    }
-
     private boolean isEasyAlgFinished() {
 
         for (int i = 0; i < 9; i++) {
@@ -327,6 +290,102 @@ public class BoardGenerator extends Thread {
             }
         }
         return true;
+    }
+
+    private boolean isSolvableByBacktracking() {
+        numberOfSolutions = 0;
+        representBoard();
+        boolean areThereTwoSolutions = backtrackingAlgorithmOnCopy(0, 0);
+
+        return !areThereTwoSolutions;
+    }
+
+    /*A little modified backtracking algorithm to work in the backend.
+    It also checks if the number of board solutions is greater than 1.
+    If it is the board is not valid (solvable)*/
+    private boolean backtrackingAlgorithmOnCopy(int row, int col) {
+
+        if (isBacktrackingFinished(row, col)) {
+            if (numberOfSolutions == 0) {
+                numberOfSolutions++;
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        if (col == 9) {
+            row++;
+            col = 0;
+        }
+
+        if (localBoard[row][col] != 0) {
+            if (backtrackingAlgorithmOnCopy(row, col + 1)) {
+                return true;
+            }
+        } else {
+            for (int n = 1; n <= 9; n++) {
+                int squareIndex = calculateSquareIndex(row, col);
+
+                if (isPossible(row, col, squareIndex, n)) {
+                    localBoard[row][col] = n;
+                    removeFromSets(row, col, squareIndex, n);
+
+                    if (backtrackingAlgorithmOnCopy(row, col + 1)) {
+                        return true;
+                    } else {
+                        localBoard[row][col] = 0;
+                        addToSets(row, col, squareIndex, n);
+                    }
+                }
+
+            }
+        }
+        return false;
+    }
+
+    private boolean wasNotChecked(int row, int col) {
+        for (int i = 0; i < rowsColsChecked.size(); i++) {
+            int[] rowCol = (int[]) rowsColsChecked.get(i);
+            if (rowCol[0] == row && rowCol[1] == col) {
+                return false;
+            }
+        }
+        rowsColsChecked.add(new int[]{row, col});
+        return true;
+    }
+
+    private int calculateSquareIndex(int row, int col) {
+        int squareIndex = 0;
+        int x = row / 3;
+        switch (col) {
+            case 0:
+            case 1:
+            case 2:
+                squareIndex = 3 * x;
+                break;
+            case 3:
+            case 4:
+            case 5:
+                squareIndex = 3 * x + 1;
+                break;
+            case 6:
+            case 7:
+            case 8:
+                squareIndex = 3 * x + 2;
+                break;
+            default:
+                break;
+        }
+        return squareIndex;
+    }
+
+    private Set<Integer> createBasicSet() {
+        basicSet = new HashSet<>();
+        for (int i = 1; i <= 9; i++) {
+            basicSet.add(i);
+        }
+        return basicSet;
     }
 
     private void removeFromSets(int row, int col, int squareIndex, int number) {
@@ -353,7 +412,7 @@ public class BoardGenerator extends Thread {
         return squareSetList;
     }
 
-    private void initialzieCopySets() {
+    private void initializeCopySets() {
         for (int i = 0; i < 9; i++) {
             columnSetListCopy.add(new HashSet<>(columnSetList));
             rowSetListCopy.add(new HashSet<>(rowSetList));
@@ -383,4 +442,11 @@ public class BoardGenerator extends Thread {
         }
     }
 
+    private void representBoard() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                localBoard[i][j] = tilesArray[i][j].getNumber();
+            }
+        }
+    }
 }

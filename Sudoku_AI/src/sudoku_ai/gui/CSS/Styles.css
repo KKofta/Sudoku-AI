@@ -75,11 +75,12 @@
     -fx-text-fill: #AB4642;
 }
 
-#notfun-button {
+#notfun-button, #exper-button {
     -fx-background-color: #181818;
 }
 
-#notfun-button:hover {
+#notfun-button:hover,
+#exper-button:hover {
     -fx-background-color: whitesmoke;
     -fx-text-fill: #181818;
 }

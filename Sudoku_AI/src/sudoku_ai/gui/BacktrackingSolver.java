@@ -13,7 +13,7 @@ public class BacktrackingSolver extends Thread {
     private static List<Set> columnSetList = new ArrayList<>(9);
     private static List<Set> rowSetList = new ArrayList<>(9);
     private static List<Set> squareSetList = new ArrayList<>(9);
-    Set<Integer> basicSet = createBasicSet();
+    private Set<Integer> basicSet = createBasicSet();
 
     public BacktrackingSolver(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, List<Set> squareSetList) {
         this.tilesArray = tilesArray;
