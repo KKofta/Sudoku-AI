@@ -29,7 +29,7 @@ public class BacktrackingSolver extends Thread {
     }
 
     private synchronized boolean backtrackingAlgorithm(int row, int col) {
-
+        
         if (isFinished(row, col)) {
             return true;
         }
@@ -44,28 +44,24 @@ public class BacktrackingSolver extends Thread {
                 return true;
             }
         } else {
-
             for (int n = 1; n <= 9; n++) {
-
                 int squareIndex = calculateSquareIndex(row, col);
 
                 if (isPossible(row, col, squareIndex, n)) {
                     tilesArray[row][col].setCalculatedNumber(n);
+                    columnSetList.get(col).remove(n);
+                    rowSetList.get(row).remove(n);
+                    squareSetList.get(squareIndex).remove(n);
                     try {
                         wait(40);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(BacktrackingSolver.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    columnSetList.get(col).remove(n);
-                    rowSetList.get(row).remove(n);
-                    squareSetList.get(squareIndex).remove(n);
-
                     if (backtrackingAlgorithm(row, col + 1)) {
                         return true;
                     } else {
                         tilesArray[row][col].setCalculatedNumber(0);
-
                         columnSetList.get(col).add(n);
                         rowSetList.get(row).add(n);
                         squareSetList.get(squareIndex).add(n);

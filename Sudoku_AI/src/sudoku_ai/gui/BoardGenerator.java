@@ -24,7 +24,7 @@ public class BoardGenerator extends Thread {
     private List rowsColsChecked = new ArrayList<>();
     private boolean experimentMode = false;
 
-    public BoardGenerator(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList, 
+    public BoardGenerator(Tile[][] tilesArray, List<Set> columnSetList, List<Set> rowSetList,
             List<Set> squareSetList, int amountToRemove, boolean experimentMode) {
         this.tilesArray = tilesArray;
         this.columnSetList = columnSetList;
@@ -182,9 +182,9 @@ public class BoardGenerator extends Thread {
             }
         }
     }
-    
-    private boolean isSolvable(){
-        if( experimentMode ){
+
+    private boolean isSolvable() {
+        if (experimentMode) {
             return isSolvableByBacktracking();
         } else {
             return isSolvableByBasicAlgorithm();
@@ -283,7 +283,6 @@ public class BoardGenerator extends Thread {
     }
 
     private boolean isEasyAlgFinished() {
-
         for (int i = 0; i < 9; i++) {
             if (!columnSetList.get(i).isEmpty() || !rowSetList.get(i).isEmpty() || !squareSetList.get(i).isEmpty()) {
                 return false;
@@ -338,7 +337,6 @@ public class BoardGenerator extends Thread {
                         addToSets(row, col, squareIndex, n);
                     }
                 }
-
             }
         }
         return false;

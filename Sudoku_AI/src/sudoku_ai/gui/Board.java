@@ -171,14 +171,14 @@ public class Board extends Pane {
             }
         }
     }
-    
-    public void animateGenerator(int amountToRemove, boolean experimentMode){
+
+    public void animateGenerator(int amountToRemove, boolean experimentMode) {
         clearBoard();
         boardGenerator = new BoardGenerator(tilesArray, columnSetList, rowSetList, squareSetList, amountToRemove, experimentMode);
         boardGenerator.start();
     }
-    
-    public void stopAnimationGenerator(){
+
+    public void stopAnimationGenerator() {
         boardGenerator.stop();
     }
 
@@ -336,36 +336,35 @@ public class Board extends Pane {
         int squareIndex = calculateSquareIndex(row, col);
         squareSetList.get(squareIndex).remove(number);
     }
-    
+
     public void addToSets(int row, int col, int number) {
         columnSetList.get(col).add(number);
         rowSetList.get(row).add(number);
         int squareIndex = calculateSquareIndex(row, col);
         squareSetList.get(squareIndex).add(number);
     }
-    
-    public boolean isBoardValid(){
-        for(int i = 0; i < 9; i++){
-            if(!columnSetList.get(i).isEmpty() || !rowSetList.get(i).isEmpty() || !squareSetList.get(i).isEmpty() ) {
+
+    public boolean isBoardValid() {
+        for (int i = 0; i < 9; i++) {
+            if (!columnSetList.get(i).isEmpty() || !rowSetList.get(i).isEmpty() || !squareSetList.get(i).isEmpty()) {
                 return false;
             }
         }
         return true;
     }
-    
-    public void saveBoard(){
+
+    public void saveBoard() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 tilesArray[i][j].changeYellowToWhite();
             }
         }
     }
-    
-    public void saveGeneratedBoard(){
+
+    public void saveGeneratedBoard() {
         saveBoard();
         rowSetList = boardGenerator.getRowSets();
         columnSetList = boardGenerator.getColSets();
         squareSetList = boardGenerator.getSquareSets();
     }
-
 }

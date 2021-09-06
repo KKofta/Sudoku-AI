@@ -35,7 +35,6 @@ public class EasySolver extends Thread {
         If the resulting set contains only one number it means that it's the only possible number to enter.
          */
         Set<Integer> basicSet = new HashSet<>();
-
         for (int i = 1; i <= 9; i++) {
             basicSet.add(i);
         }
@@ -82,9 +81,7 @@ public class EasySolver extends Thread {
                                 squareSetList.get(squareIndex).remove(resultNumber);
                             }
                         }
-
                         tilesArray[row][col].setWhiteBorderColor();
-
                     }
                 }
             }
@@ -92,7 +89,6 @@ public class EasySolver extends Thread {
     }
 
     private int method2(int row, int col, Integer[] array) {
-
         for (int i = 0; i < array.length; i++) {
             int count = 0;
             //check rows
@@ -124,7 +120,6 @@ public class EasySolver extends Thread {
                     count++;
                 }
             }
-
             if (count == 2) {
                 return array[i];
             }
@@ -158,7 +153,6 @@ public class EasySolver extends Thread {
     }
 
     private static boolean isAlgorithmFinished() {
-
         for (int i = 0; i < 9; i++) {
             if (!columnSetList.get(i).isEmpty() || !rowSetList.get(i).isEmpty() || !squareSetList.get(i).isEmpty()) {
                 return false;
@@ -169,7 +163,7 @@ public class EasySolver extends Thread {
         squareSetList.clear();
         return true;
     }
-    
+
     private Set<Integer> createBasicSet() {
         basicSet = new HashSet<>();
         for (int i = 1; i <= 9; i++) {
@@ -177,5 +171,4 @@ public class EasySolver extends Thread {
         }
         return basicSet;
     }
-
 }

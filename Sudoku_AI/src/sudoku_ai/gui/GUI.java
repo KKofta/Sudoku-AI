@@ -50,7 +50,6 @@ public class GUI extends Application {
     private void createTitle(BorderPane root, Stage primaryStage) {
 
         VBox title = new VBox();
-        //multiply to set size (0.80 is like 10% of the window) - do ew późniejszego poprawienia boardu i tile
         title.prefHeightProperty().bind(primaryStage.heightProperty().multiply(0.1));
 
         title.setAlignment(Pos.CENTER);

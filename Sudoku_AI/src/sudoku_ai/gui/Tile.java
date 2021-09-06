@@ -44,7 +44,6 @@ public class Tile extends StackPane {
         text.setText(numberString);
         text.setFill(Color.WHITESMOKE);
         text.setStroke(Color.WHITESMOKE);
-        //Color.
     }
 
     public void setCalculatedNumber(int number) {
@@ -186,5 +185,4 @@ public class Tile extends StackPane {
     public int getColumn() {
         return col;
     }
-
 }
