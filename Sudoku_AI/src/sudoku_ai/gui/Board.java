@@ -367,4 +367,16 @@ public class Board extends Pane {
         columnSetList = boardGenerator.getColSets();
         squareSetList = boardGenerator.getSquareSets();
     }
+    
+    public void setRows(List<Set> rowSetList){
+        this.rowSetList = rowSetList;
+    }
+    
+    public void setCols(List<Set> columnSetList){
+        this.columnSetList = columnSetList;
+    }
+    
+    public void SetSquares(List<Set> squareSetList){
+        this.squareSetList = squareSetList;
+    }
 }

@@ -29,8 +29,11 @@ public class BacktrackingSolver extends Thread {
     }
 
     private synchronized boolean backtrackingAlgorithm(int row, int col) {
-        
+
         if (isFinished(row, col)) {
+            GUI.getBoard().setRows(rowSetList);
+            GUI.getBoard().setCols(columnSetList);
+            GUI.getBoard().SetSquares(squareSetList);
             return true;
         }
 

@@ -158,9 +158,9 @@ public class EasySolver extends Thread {
                 return false;
             }
         }
-        columnSetList.clear();
-        rowSetList.clear();
-        squareSetList.clear();
+        GUI.getBoard().setRows(rowSetList);
+        GUI.getBoard().setCols(columnSetList);
+        GUI.getBoard().SetSquares(squareSetList);
         return true;
     }
 

@@ -142,7 +142,7 @@ public class Tile extends StackPane {
                 }
             } else {
                 gameArea.turnOffRowsColsSquare();
-                this.border.requestFocus();
+                border.requestFocus();
             }
         });
     }
