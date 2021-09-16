@@ -21,7 +21,7 @@ Sudoku with AI is a desktop application which allows user to:
 * Solve boards using 2 different algorithms.
 
 In project I used following algorithms:
-* <a href="https://en.wikipedia.org/wiki/Backtracking">Backtracking Algorithm</a> - depth-first search algorithm which guarantees to find sudoku solution if it exists.
+* <a href="https://en.wikipedia.org/wiki/Backtracking">Backtracking Algorithm</a> - depth-first search algorithm which guarantees to find sudoku solution if it exists;
 * 1st Heuristic Algorithm - easy solving algorithm which is based on human logic while solving sudoku. It finds solution only when applied to easy boards.
 
 Both solving algorithms listed above (with small modifications) were also used to implement sudoku board generators
@@ -34,7 +34,7 @@ Both solving algorithms listed above (with small modifications) were also used t
 
 ### Motivation
 
-App was created mainly as a hobby. It was useful expand Java OOP, concurrency and JavaFX knowladge. I wanted to learn about Backtracking Algorithm and apply it in a nicely designed visualisations. Suprisingly it turned out that I also learned something about Sudoku puzzles.
+App was created mainly as a hobby. It was useful in expanding Java OOP, concurrency and JavaFX knowladge. I wanted to learn about Backtracking Algorithm and apply it in a nicely designed visualisations. Suprisingly it turned out that I also learned something about Sudoku puzzles.
 
 ---
 
