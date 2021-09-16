@@ -28,7 +28,7 @@ Both solving algorithms listed above (with small modifications) were also used t
 
 #### Preview
 
-<img src="https://github.com/KKofta/Tic-Tac-Toe-AI/blob/master/Preview/Preview.gif">
+<img src="https://github.com/KKofta/Sudoku-AI/blob/master/Preview/Preview.gif">
 
 ---
 
